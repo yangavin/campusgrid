@@ -63,7 +63,7 @@ def scrape_frontenac():
         }
         listings.append(listing)
 
-#scrape_kijiji()
+scrape_kijiji()
 scrape_frontenac()
 print("All listings:")
 print_listings(listings)
