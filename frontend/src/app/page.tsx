@@ -1,19 +1,15 @@
-import { useState, useEffect } from 'react';
 import House from "./models"
 import HouseCard from "./HouseCard"
 
 async function getListings() {
-  const response = await fetch('http://localhost:3001/listings');
+  const response = await fetch('http://localhost:3001/listings', {cache: "no-store"});
   const data = await response.json();
   return data;
 }
 
-export default function Home() {
-  const [listings, setListings] = useState<House[]>([]);
-
-  useEffect(() => {
-    getListings().then(data => setListings(data));
-  }, []);
+export default async function Home() {
+  const listings = await getListings();
+  console.log(listings)
 
   return (
     <>
