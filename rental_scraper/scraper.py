@@ -23,6 +23,7 @@ def scrape_kijiji():
 
     global counter
     for item in items:
+        image = item.find('img').get('src')
         title = item.find("h3", attrs={"data-testid": "listing-title"}).text.strip()
         price = item.find("p", attrs={"data-testid": "listing-price"}).text.strip()
         if item.find("li", attrs={"aria-label": "Bedrooms"}) == None:
@@ -40,6 +41,7 @@ def scrape_kijiji():
         counter += 1
         listing = {
             "count": counter,
+            "image": image,
             "title": title,
             "price": price,
             "beds": beds,
@@ -63,6 +65,7 @@ def scrape_frontenac():
     for item in items:
         if item.find("div", class_="text").text.strip() == "RENTED":
             continue
+        image = item.find('img').get('src')
         title = item.find("a")["title"].strip()
         price = (
             item.find("span", class_="property-price label label-primary pull-right")
@@ -76,6 +79,7 @@ def scrape_frontenac():
         counter += 1
         listing = {
             "count": counter,
+            "image": image,
             "title": title,
             "price": price,
             "beds": beds,
@@ -83,7 +87,6 @@ def scrape_frontenac():
             "link": link,
         }
         listings.append(listing)
-
 
 scrape_kijiji()
 scrape_frontenac()
