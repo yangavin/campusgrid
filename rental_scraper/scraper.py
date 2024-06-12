@@ -12,15 +12,6 @@ def print_listings(listings):
 
 def scrape_kijiji():
     print("Scraping Kijiji...")
-<<<<<<< HEAD
-    url = 'https://www.kijiji.ca/b-real-estate/kingston-on/c34l1700183?sort=dateDesc&radius=12.0&address=Kingston%2C+ON&ll=44.2334401%2C-76.49302949999999'
-    #'https://www.kijiji.ca/b-real-estate/kingston-on/c34l1700183?address=Kingston%2C%20ON&gpTopAds=y&ll=44.2334401%2C-76.49302949999999&radius=12.0&sort=dateDesc'
-    response = requests.get(url) # Retreive the html content
-    soup = BeautifulSoup(response.content, 'html.parser') # Parse the raw data
-    
-    items = soup.select('li[data-testid^="listing-card-list-item-"]') # Retrieve list of listings
-    
-=======
     url = "https://www.kijiji.ca/b-real-estate/kingston-on/c34l1700183?address=Kingston%2C%20ON&gpTopAds=y&ll=44.2334401%2C-76.49302949999999&radius=12.0&sort=dateDesc"
     response = requests.get(url)  # Retreive the html content
     soup = BeautifulSoup(response.content, "html.parser")  # Parse the raw data
@@ -29,7 +20,6 @@ def scrape_kijiji():
         'li[data-testid^="listing-card-list-item-"]'
     )  # Retrieve list of listings
 
->>>>>>> origin/main
     for item in items:
         title = item.find("h3", attrs={"data-testid": "listing-title"}).text.strip()
         price = item.find("p", attrs={"data-testid": "listing-price"}).text.strip()
@@ -87,11 +77,6 @@ def scrape_frontenac():
         }
         listings.append(listing)
 
-<<<<<<< HEAD
-def scrape_facebook_group1(): 
-    print("Scraping Facebook...")
-    url = 'https://www.facebook.com/groups/QueensUniversityStudentHousing/buy_sell_discussion'
-    response = requests.get(url)
 
 scrape_kijiji()
 scrape_frontenac()
