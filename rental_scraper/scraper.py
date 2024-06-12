@@ -87,5 +87,3 @@ def scrape_frontenac():
 
 scrape_kijiji()
 scrape_frontenac()
-
-print_listings(listings)
