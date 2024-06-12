@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import House from "./models"
 import HouseCard from "./HouseCard"
 
@@ -7,8 +8,13 @@ async function getListings() {
   return data;
 }
 
-export default async function Home() {
-  const listings: House[] = await getListings();
+export default function Home() {
+  const [listings, setListings] = useState<House[]>([]);
+
+  useEffect(() => {
+    getListings().then(data => setListings(data));
+  }, []);
+
   return (
     <>
       <h1 className="text-center text-5xl my-8">Kingston House Listings</h1>
