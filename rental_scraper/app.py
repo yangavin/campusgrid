@@ -1,7 +1,7 @@
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
-from scraper import get_listings
+from scraper import print_listings
 
 app = Flask(__name__)
 CORS(app)
