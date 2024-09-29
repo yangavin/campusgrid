@@ -1,24 +1,28 @@
-import House from "./models"
-import HouseCard from "./HouseCard"
+import { useEffect, useState } from "react";
+import HouseCard from "./HouseCard";
+import House from "./models";
 
-async function getListings() {
-  const response = await fetch('https://guarded-garden-90378-97fa86afe265.herokuapp.com/listings', {cache: "no-store"});
-  const data = await response.json();
-  return data;
-}
+export default function Home() {
+  const [listings, setListings] = useState<House[]>([]);
 
-export default async function Home() {
-  const listings = await getListings();
-  console.log(listings)
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch("https://guarded-garden-90378-97fa86afe265.herokuapp.com/listings");
+      const data = await response.json();
+      setListings(data);
+    }
+
+    fetchData(); // Fetch data when the component mounts (on page load)
+  }, []); // Empty dependency array ensures it runs only on page load
 
   return (
     <>
       <h1 className="text-center text-5xl my-8">Kingston House Listings</h1>
-        <div className="flex flex-wrap gap-4 justify-center">
-          {listings.map((house: House) => (
-            <HouseCard {...house} key={house.title}/>
-          ))}
-        </div>
+      <div className="flex flex-wrap gap-4 justify-center">
+        {listings.map((house: House) => (
+          <HouseCard {...house} key={house.title} />
+        ))}
+      </div>
     </>
   );
 }
