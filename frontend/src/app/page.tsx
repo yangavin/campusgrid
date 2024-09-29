@@ -2,7 +2,7 @@ import House from "./models"
 import HouseCard from "./HouseCard"
 
 async function getListings() {
-  const response = await fetch('http://localhost:3001/listings', {cache: "no-store"});
+  const response = await fetch('https://guarded-garden-90378-97fa86afe265.herokuapp.com/listings', {cache: "no-store"});
   const data = await response.json();
   return data;
 }
