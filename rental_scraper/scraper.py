@@ -73,7 +73,13 @@ def scrape_frontenac():
             .text.strip()
         )
         beds_baths = item.find_all("span", class_="bedrooms")
-        beds = beds_baths[0].find("b").text.strip()
+        
+        beds_element = beds_baths[0].find("b")
+        if beds_element is not None:
+            beds = beds_baths[0].find("b").text.strip()
+        else:
+            beds = "N/A"
+        
         baths = beds_baths[1].find("b").text.strip()
         link = item.find("a")["href"].strip()
         counter += 1
