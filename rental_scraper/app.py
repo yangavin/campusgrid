@@ -8,7 +8,7 @@ CORS(app)
 
 @app.route("/listings")
 def get_listings_route():
-    return jsonify(get_listings())
+    return jsonify(print_listings())
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # Use PORT provided by Heroku, default to 5000 for local dev
