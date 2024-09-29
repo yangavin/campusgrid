@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup
 listings = []
 counter = 0
 
+def get_listings():
+    return listings
+
 def print_listings(listings):
     for item in listings:
         print(item)
