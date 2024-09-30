@@ -9,7 +9,7 @@ export default function HouseCard({image, title, price, link, baths, beds}: Hous
             <p>{price}</p>
             <p>{baths} baths</p>
             <p>{beds} beds</p>
-            <Link href={`https://${link}`} target="_blank" className="text-sky-600">View Listing</Link>
+            <Link href={link} target="_blank" className="text-sky-600">View Listing</Link>
         </div>
     );
 }
