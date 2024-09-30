@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import HouseCard from "./HouseCard";
 import House from "./models";
