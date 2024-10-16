@@ -9,6 +9,7 @@ export default function HouseCard({image, address, price, link, baths, beds}: Ho
     });
     return (
         <div className="w-1/5 border rounded-md p-6">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={image} className="w-full h-64 object-cover mb-4 rounded-sm" alt="property"/>
             <h2 className="mb-4 text-xl">{address}</h2> 
             <p className='text-2xl'>{formatter.format(price)}</p>
