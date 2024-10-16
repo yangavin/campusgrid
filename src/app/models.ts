@@ -1,8 +1,9 @@
 export default interface House {
   image: string;
-  title: string;
-  price: string;
+  address: string;
+  price: number;
   link: string;
-  baths: string;
+  baths?: string;
   beds: string;
+  availableDate?: string;
 }

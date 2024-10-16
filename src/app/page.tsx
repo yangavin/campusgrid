@@ -9,7 +9,7 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch("https://guarded-garden-90378-97fa86afe265.herokuapp.com/listings");
+      const response = await fetch("http://localhost:3002");
       const data = await response.json();
       setListings(data);
     }
