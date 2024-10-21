@@ -17,6 +17,7 @@ async function getListings(): Promise<House[]> {
       beds: data.beds,
       baths: data.baths,
       availableDate: data.availableDate,
+      source: data.source
     } as House;
   });
   return listings;

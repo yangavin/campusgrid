@@ -1,12 +1,13 @@
 import House from './models';
 import Link from 'next/link';
 
+const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    trailingZeroDisplay: 'stripIfInteger'
+});
+
 export default function HouseCard({image, address, price, link, baths, beds, availableDate}: House){
-    const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        trailingZeroDisplay: 'stripIfInteger'
-    });
     return (
         <Link href={link} target="_blank" className="w-1/5 border rounded-md p-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}

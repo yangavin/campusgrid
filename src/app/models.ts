@@ -6,4 +6,5 @@ export default interface House {
   baths?: string;
   beds: number;
   availableDate?: string;
+  source: string;
 }
