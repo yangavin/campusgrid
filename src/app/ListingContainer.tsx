@@ -43,7 +43,7 @@ export default function ListingContainer(){
   })
   return (
     <>
-    <div className="flex justify-center gap-10">
+    <div className="flex flex-col md:flex-row justify-center gap-10">
       <div className="flex flex-col items-center mb-10">
         <Label className="mb-3">Beds</Label>
         <ToggleGroup type="multiple" variant="outline" onValueChange={(val)=>{
@@ -61,7 +61,7 @@ export default function ListingContainer(){
 
       <div className="flex flex-col items-center mb-10">
         <Label htmlFor="price" className="mb-3">Max Price</Label>
-        <Input type="number" id="price" className="text-center" onChange={({target})=>{
+        <Input type="number" id="price" className="text-center w-1/2 md:w-full" onChange={({target})=>{
           setMaxPrice(parseInt(target.value));
         }}/>
       </div>

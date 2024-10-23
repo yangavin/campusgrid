@@ -18,7 +18,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 export default function HouseCard({image, address, price, link, baths, beds, availableDate}: House){
     return (
-        <Link href={link} target="_blank" className="w-1/5 animate-fade-in">
+        <Link href={link} target="_blank" className="xl:w-1/5 lg:w-1/4 md:1/2 w-9/12 animate-fade-in">
             <Card className='h-96'>
                 <CardHeader>
                     <CardTitle>{address}</CardTitle>
