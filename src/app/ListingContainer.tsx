@@ -8,6 +8,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Skeletons from "./Skeletons";
 
 async function getListings(): Promise<House[]> {
   const querySnapshot = await getDocs(collection(db, "listings"));
@@ -33,7 +34,7 @@ export default function ListingContainer(){
   const [beds, setBeds] = useState<number[]>([]);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const filteredListings = listings?.filter((listing)=>{
-    if(beds.length > 0 && !beds.includes(listing.beds)){
+    if(beds.length > 0 && !beds.includes(Number(listing.beds))){
       return false;
     }
     if(maxPrice && listing.price > maxPrice){
@@ -68,7 +69,7 @@ export default function ListingContainer(){
     </div>
 
       <div className="flex flex-wrap gap-4 justify-center">
-          {isLoading && <p>Loading...</p>}
+          {isLoading && <Skeletons/>}
           {error && <p>Failed to load listings</p>}
           {listings && listings.length === 0 && <p>No listings found</p>}
           {filteredListings?.map((listing)=>{

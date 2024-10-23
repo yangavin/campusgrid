@@ -3,12 +3,9 @@ import Link from 'next/link';
 import {
     Card,
     CardContent,
-    CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
-import { Badge } from '@/components/ui/badge';
 
 const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
