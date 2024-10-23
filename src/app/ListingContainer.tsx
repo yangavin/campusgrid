@@ -9,6 +9,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Skeletons from "./Skeletons";
+import { Half2Icon } from "@radix-ui/react-icons";
 
 async function getListings(): Promise<House[]> {
   const querySnapshot = await getDocs(collection(db, "listings"));
@@ -42,6 +43,7 @@ export default function ListingContainer(){
     }
     return true;
   })
+  console.log(filteredListings)
   return (
     <>
     <div className="flex flex-col md:flex-row justify-center gap-10">
@@ -68,10 +70,13 @@ export default function ListingContainer(){
       </div>
     </div>
 
+      <h2 className="text-center mb-3">
+        {filteredListings ? `${filteredListings.length} listings` : "Loading listings..."}
+      </h2>
+
       <div className="flex flex-wrap gap-4 justify-center">
           {isLoading && <Skeletons/>}
           {error && <p>Failed to load listings</p>}
-          {listings && listings.length === 0 && <p>No listings found</p>}
           {filteredListings?.map((listing)=>{
               return <HouseCard key={listing.id} {...listing}/>
           })}
