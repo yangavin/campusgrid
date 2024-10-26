@@ -3,13 +3,12 @@ import { useState } from "react";
 import HouseCard from "./HouseCard";
 import House from "./models";
 import useSWR from "swr";
-import {db} from "./firebase-dev";
+import { db } from "./firebase-dev";
 import { collection, getDocs } from "firebase/firestore";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Skeletons from "./Skeletons";
-import { Half2Icon } from "@radix-ui/react-icons";
 
 async function getListings(): Promise<House[]> {
   const querySnapshot = await getDocs(collection(db, "listings"));
@@ -43,7 +42,6 @@ export default function ListingContainer(){
     }
     return true;
   })
-  console.log(filteredListings)
   return (
     <>
     <div className="flex flex-col md:flex-row justify-center gap-10">
