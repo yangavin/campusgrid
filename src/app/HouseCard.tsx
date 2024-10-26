@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import House from './models';
 import Link from 'next/link';
 import {
