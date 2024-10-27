@@ -5,72 +5,66 @@ import { ModeToggle } from "./ThemeButton";
 import { signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
 import { auth, analytics } from "./firebase-dev";
 import  { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { db } from "./firebase-dev";
-import { getDocs , collection } from "firebase/firestore";
+import { useState } from "react";
 import { setUserProperties } from "firebase/analytics";
+import useSWR from "swr";
 
-async function getAdmittedUsers(){
-  const querySnapshot = await getDocs(collection(db, "admitted_users"));
-  const users = querySnapshot.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      email: data.email
-    } as {email: string};
-  });
-  return users;
-}
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
-  const [isAdmitted, setIsAdmitted] = useState(false);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const {data: isAdmitted, isLoading: checkingAdmission, error: admissionError} = useSWR(user, async ()=>getAdmission(user?.email!), {revalidateOnFocus: false});
+
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      setUser(user);
+    } else {
+      setUser(null);
+    }
+    setLoadingUser(false);
+  });
+
+async function getAdmission(email: string | null){
+  if (!email){
+    return false;
+  }
+  const res = await fetch(`https://check-admission-x3avzzjfra-uc.a.run.app?email=${email}`);
+  const admission = await res.text();
+  if (admission === "true"){
+    setUserProperties(analytics, {
+      email: user?.email
+    })
+    return true;
+  }
+  return false;
+}
+
   const signIn = async () =>{
     const result = await signInWithPopup(auth, new GoogleAuthProvider())
-    const admittedUsers = await getAdmittedUsers()
     setUser(result.user);
-    if (admittedUsers?.map(userObj=>userObj.email).includes(result.user.email!)) setIsAdmitted(true);
   }
-  useEffect(()=>{
-    if (isAdmitted){
-      setUserProperties(analytics, {
-        email: user?.email
-      })
-    }
-  }, [isAdmitted, user])
-
-  if (!user) {
-    return (
-    <>
-      <h1 className="text-center text-5xl my-4">Affyto</h1>
-
-      <div className="mb-10">
-      </div>
-
-      <div className="flex flex-col items-center justify-center gap-8">
-        <h2 className="text-xl">Sign in to view listings</h2>
-        <Button onClick={signIn}>Sign in</Button>
-      </div>
-    </>
-    );
+  const signOut = async () =>{
+    await auth.signOut();
+    setUser(null);
   }
-  if (!isAdmitted){
-    return (
-      <>
-        <h1 className="text-center text-5xl my-4">Affyto</h1>
+  let status: string;
+  if (checkingAdmission || loadingUser) status = "loading"
+  else if (!user) status = "unauthenticated"
+  else if (!isAdmitted) status = "unadmitted"
+  else status = "authorized"
 
-        <div className="flex flex-col items-center justify-center gap-8">
-          <a className="text-xl text-primary underline" href="https://forms.gle/P7VtFqQsA5tacDpaA" target="_blank">
-            Join our waitlist to test our beta!
-          </a>
-        </div>
-      </>
-    );
-  }
   return (
     <>
         <div className="flex justify-between m-4">
           <ModeToggle/>
-          <img src={user.photoURL!} alt="photo" height={50} width={50}/>
+          {(status === "unadmitted" || status === "authorized") && (
+            <Button onClick={()=>{
+              auth.signOut();
+              setUser(null);
+            }}>
+                Log out
+            </Button>
+          )}
         </div>
       <h1 className="text-center text-5xl my-4">Affyto</h1>
 
@@ -80,8 +74,28 @@ export default function Home() {
         </h2>
         <h2 className="text-center">We value your feedback and we always respond!</h2>
       </div>
+        <div className="mb-10">
+        </div>
+  
+      {status === "loading" && <h2 className="text-center">Loading...</h2>}
 
-      <ListingContainer />
+      {status === "unauthenticated" && (
+        <div className="flex flex-col items-center justify-center gap-8">
+          <Button onClick={signIn}>Sign in with Google</Button>
+        </div>
+      )}
+
+      {status === "unadmitted" && (
+        <div className="flex flex-col items-center justify-center gap-8">
+          <a className="text-xl text-blue-400 underline" href="https://forms.gle/P7VtFqQsA5tacDpaA" target="_blank">
+            Join our waitlist to test our beta!
+          </a>
+        </div>
+      )}
+
+      {status === "authorized" && (
+        <ListingContainer />
+      )}
 
     </>
   );
