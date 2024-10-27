@@ -3,10 +3,10 @@
 import ListingContainer from "./ListingContainer";
 import { ModeToggle } from "./ThemeButton";
 import { signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
-import { auth, analytics } from "./firebase-dev";
+import { auth, analytics} from "./firebase-dev";
 import  { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { setUserProperties } from "firebase/analytics";
+import { setUserProperties, isSupported } from "firebase/analytics";
 import useSWR from "swr";
 import { environment } from "./firebase-dev";
 
@@ -33,10 +33,13 @@ async function getAdmission(email: string | null){
   const res = await fetch(`https://check-admission-x3avzzjfra-uc.a.run.app?email=${email}`);
   const admission = await res.text();
   if (admission === "true"){
-    setUserProperties(analytics, {
+    const result = await analytics;
+    if (result){
+    setUserProperties(result, {
       email: user?.email
     })
     return true;
+    }
   }
   return false;
 }
