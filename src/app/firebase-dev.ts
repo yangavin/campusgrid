@@ -18,6 +18,10 @@ const firebaseConfig = {
   measurementId: "G-NSS9F0K2BM",
 };
 
+export const environment = () => {
+  console.log(process.env.NEXT_PUBLIC_ENV || "development");
+};
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
