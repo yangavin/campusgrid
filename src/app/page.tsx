@@ -3,11 +3,12 @@
 import ListingContainer from "./ListingContainer";
 import { ModeToggle } from "./ThemeButton";
 import { signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
-import { auth } from "./firebase-dev";
+import { auth, analytics } from "./firebase-dev";
 import  { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "./firebase-dev";
-import { getDocs , collection} from "firebase/firestore";
+import { getDocs , collection } from "firebase/firestore";
+import { setUserProperties } from "firebase/analytics";
 
 async function getAdmittedUsers(){
   const querySnapshot = await getDocs(collection(db, "admitted_users"));
@@ -29,6 +30,14 @@ export default function Home() {
     setUser(result.user);
     if (admittedUsers?.map(userObj=>userObj.email).includes(result.user.email!)) setIsAdmitted(true);
   }
+  useEffect(()=>{
+    if (isAdmitted){
+      setUserProperties(analytics, {
+        email: user?.email
+      })
+    }
+  }, [isAdmitted, user])
+
   if (!user) {
     return (
     <>
