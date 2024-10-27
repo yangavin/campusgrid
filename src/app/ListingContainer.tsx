@@ -33,6 +33,8 @@ export default function ListingContainer(){
   const { data: listings, isLoading, error } = useSWR<House[]>("http://localhost:3002", getListings);
   const [beds, setBeds] = useState<number[]>([]);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [source, setSource] = useState<string[]>([]);
+
   const filteredListings = listings?.filter((listing)=>{
     if(beds.length > 0 && !beds.includes(Number(listing.beds))){
       return false;
@@ -40,8 +42,12 @@ export default function ListingContainer(){
     if(maxPrice && listing.price > maxPrice){
       return false;
     }
+    if(source.length > 0 && !source.includes(listing.source)){
+      return false;
+    }
     return true;
   })
+
   return (
     <>
     <div className="flex flex-col md:flex-row justify-center gap-10">
@@ -67,6 +73,19 @@ export default function ListingContainer(){
         }}/>
       </div>
     </div>
+
+      <div className="flex flex-col items-center mb-10">
+        <Label className="mb-3">Source</Label>
+        <ToggleGroup className="flex-wrap" type="multiple" variant="outline" onValueChange={(val)=>{
+          setSource(val);
+        }}>
+          <ToggleGroupItem value="accommodation">Accommodation Listings</ToggleGroupItem>
+          <ToggleGroupItem value="axon">Axon</ToggleGroupItem>
+          <ToggleGroupItem value="amberpeak">Amber Peak</ToggleGroupItem>
+          <ToggleGroupItem value="frontenac">Frontenac</ToggleGroupItem>
+          <ToggleGroupItem value="kijiji">Kijiji</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
 
       <h2 className="text-center mb-3">
         {filteredListings ? `${filteredListings.length} listings` : "Loading listings..."}
