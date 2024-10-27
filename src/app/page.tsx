@@ -8,9 +8,6 @@ import  { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { setUserProperties, isSupported } from "firebase/analytics";
 import useSWR from "swr";
-import { environment } from "./firebase-dev";
-
-environment();
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
