@@ -3,10 +3,10 @@
 import ListingContainer from "./ListingContainer";
 import { ModeToggle } from "./ThemeButton";
 import { signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
-import { auth, analytics} from "./firebase-dev";
+import { auth, analytics, admissionLink } from "./firebase-dev";
 import  { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { setUserProperties, isSupported } from "firebase/analytics";
+import { setUserProperties } from "firebase/analytics";
 import useSWR from "swr";
 
 export default function Home() {
@@ -27,7 +27,7 @@ async function getAdmission(email: string | null){
   if (!email){
     return false;
   }
-  const res = await fetch(`https://check-admission-x3avzzjfra-uc.a.run.app?email=${email}`);
+  const res = await fetch(admissionLink + `?email=${email}`);
   const admission = await res.text();
   if (admission === "true"){
     const result = await analytics;
