@@ -12,6 +12,7 @@ import useSWR from "swr";
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
+  const [showListings, setShowListings] = useState(true);
   const {data: isAdmitted, isLoading: checkingAdmission, error: admissionError} = useSWR(user, async ()=>getAdmission(user?.email!), {revalidateOnFocus: false});
 
   auth.onAuthStateChanged(async (user) => {
@@ -76,7 +77,9 @@ async function getAdmission(email: string | null){
         </h2>
         <h2 className="text-center">We value your feedback and we always respond!</h2>
       </div>
-        <div className="mb-10">
+        <div className="mb-10 flex justify-center">
+          {showListings && (status !== "loading") && <Button onClick={()=>setShowListings(false)}>Go to Sublets</Button>}
+          {!showListings && (status !== "loading") && <Button onClick={()=>setShowListings(true)}>Go to Listings</Button>}
         </div>
   
       {status === "loading" && <h2 className="text-center">Loading...</h2>}
@@ -96,7 +99,7 @@ async function getAdmission(email: string | null){
       )}
 
       {status === "authorized" && (
-        <ListingContainer />
+        <ListingContainer showListings={showListings} />
       )}
 
     </>
