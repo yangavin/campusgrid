@@ -42,6 +42,7 @@ async function getSublets(){
     const data = doc.data();
     return {
       id: doc.id,
+      poster: data.poster,
       photos: data.photos,
       address: data.address,
       price: data.price,
@@ -66,15 +67,16 @@ type Inputs = {
   description: string,
   contact: string,
 };
+type Prop = {
+  showListings: boolean
+}
 
-export default function ListingContainer({showListings}: {showListings: boolean}) {
+export default function ListingContainer({showListings}: Prop) {
   const { data: listings, isLoading, error } = useSWR<House[]>("listings", getListings);
   const { data: sublets, isLoading: loadingSublet, error: errorSublet } = useSWR<Sublet[]>("sublets", getSublets);
   const [beds, setBeds] = useState<number[]>([]);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [source, setSource] = useState<string[]>([]);
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
 
   const filteredListings = listings?.filter((listing)=>{
     if(beds.length > 0 && !beds.includes(Number(listing.beds))){

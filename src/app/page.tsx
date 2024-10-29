@@ -5,12 +5,33 @@ import { ModeToggle } from "./ThemeButton";
 import { signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
 import { auth, analytics, admissionLink } from "./firebase-dev";
 import  { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { createContext, useState } from "react";
 import { setUserProperties } from "firebase/analytics";
 import useSWR from "swr";
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { UserData } from "./models";
 
+const db = getFirestore();
+
+const loadUserData = async (userId: string, data: any) => {
+  try{
+    const userRef = doc(db, "users", userId);
+    const docSnap = await getDoc(userRef);
+
+    if (!docSnap.exists()) {
+        // Save new user data if it’s the first sign-up
+        await setDoc(userRef, data);
+    }
+  } catch (err){
+    console.log(err)
+  }
+};
+
+
+export const UserContext = createContext<UserData | null>(null);
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [showListings, setShowListings] = useState(true);
   const {data: isAdmitted, isLoading: checkingAdmission, error: admissionError} = useSWR(user, async ()=>getAdmission(user?.email!), {revalidateOnFocus: false});
@@ -44,11 +65,13 @@ async function getAdmission(email: string | null){
 
   const signIn = async () =>{
     const result = await signInWithPopup(auth, new GoogleAuthProvider())
-    setUser(result.user);
-  }
-  const signOut = async () =>{
-    await auth.signOut();
-    setUser(null);
+    const user = result.user
+    await loadUserData(user.uid, {name: user.displayName, email: user.email});
+
+    const userRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(userRef); 
+    setUser(user);
+    setUserData(docSnap.data() as UserData);
   }
   let status: string;
   if (checkingAdmission || loadingUser) status = "loading"
@@ -57,13 +80,14 @@ async function getAdmission(email: string | null){
   else status = "authorized"
 
   return (
-    <>
+    <UserContext.Provider value={userData}>
         <div className="flex justify-between m-4">
           <ModeToggle/>
           {(status === "unadmitted" || status === "authorized") && (
             <Button onClick={()=>{
               auth.signOut();
               setUser(null);
+              setUserData(null);
             }}>
                 Log out
             </Button>
@@ -102,6 +126,6 @@ async function getAdmission(email: string | null){
         <ListingContainer showListings={showListings} />
       )}
 
-    </>
+    </UserContext.Provider>
   );
 }

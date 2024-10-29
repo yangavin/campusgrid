@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebase-dev";
 import { DialogClose } from "@/components/ui/dialog";
+import { UserContext } from "./page";
 
 type Inputs = {
   address: string;
@@ -30,6 +31,7 @@ export default function SubletForm() {
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<Inputs>();
     const [date, setDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
+    const userData = useContext(UserContext)
   
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
       try {
@@ -37,6 +39,7 @@ export default function SubletForm() {
         const formData = {
           ...data,
           photos: photoUrls,
+          poster: userData?.name
         };
         console.log(formData)
         // await axios.post("http://localhost:3001", formData);

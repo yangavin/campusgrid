@@ -31,6 +31,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 export default function SubletCard({
     id,
+    poster,
     address,
     price,
     baths,
@@ -121,6 +122,7 @@ export default function SubletCard({
                     {endDate && <p>End Date: {endDate.toDateString()}</p>}
                     <p className="mb-4">{description}</p>
                     <p className="font-bold">Contact: {contact}</p>
+                    <p className="font-bold">Posted by: {poster}</p>
                 </div>
                 <DialogFooter>
                     <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
