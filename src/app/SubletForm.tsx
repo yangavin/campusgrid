@@ -9,6 +9,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "./firebase-dev";
+import { DialogClose } from "@/components/ui/dialog";
 
 type Inputs = {
   address: string;
@@ -24,21 +27,46 @@ type Inputs = {
 };
 
 export default function SubletForm() {
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm<Inputs>();
+    const [date, setDate] = useState<Date>();
+    const [endDate, setEndDate] = useState<Date>();
   
-  const [date, setDate] = useState<Date>();
-  const [endDate, setEndDate] = useState<Date>();
-
-  const handleDateSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate || undefined);
-    setValue("availableDate", selectedDate || undefined, { shouldValidate: true });
-  };
-
-  const handleEndDateSelect = (selectedEndDate: Date | undefined) => {
-    setEndDate(selectedEndDate || undefined);
-    setValue("endDate", selectedEndDate || undefined);
-  };
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+      try {
+        const photoUrls = await uploadPhotos(data.photos);
+        const formData = {
+          ...data,
+          photos: photoUrls,
+        };
+        console.log(formData)
+        // await axios.post("http://localhost:3001", formData);
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    };
+  
+    const uploadPhotos = async (photos: FileList): Promise<string[]> => {
+      const photoUrls: string[] = [];
+  
+      for (const photo of Array.from(photos)) {
+        const storageRef = ref(storage, `photos/${photo.name}`);
+        await uploadBytes(storageRef, photo);
+        const downloadUrl = await getDownloadURL(storageRef);
+        photoUrls.push(downloadUrl);
+      }
+  
+      return photoUrls;
+    };
+  
+    const handleDateSelect = (selectedDate: Date | undefined) => {
+      setDate(selectedDate || undefined);
+      setValue("availableDate", selectedDate || undefined, { shouldValidate: true });
+    };
+  
+    const handleEndDateSelect = (selectedEndDate: Date | undefined) => {
+      setEndDate(selectedEndDate || undefined);
+      setValue("endDate", selectedEndDate || undefined);
+    };
 
   return (
     <div className="max-h-[600px] overflow-y-auto p-4 border rounded-md">
@@ -123,7 +151,9 @@ export default function SubletForm() {
           {errors.contact && <span className="text-red-400">This field is required</span>}
         </div>
 
-        <Button type="submit">Submit</Button>
+        <DialogClose>
+            <Button type="submit">Submit</Button>
+        </DialogClose>
       </form>
     </div>
   );

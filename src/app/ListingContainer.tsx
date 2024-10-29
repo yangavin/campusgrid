@@ -2,6 +2,7 @@
 import { useState } from "react";
 import HouseCard from "./HouseCard";
 import House from "./models";
+import {Sublet} from "./models"
 import useSWR from "swr";
 import { db } from "./firebase-dev";
 import { collection, getDocs } from "firebase/firestore";
@@ -9,10 +10,11 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Skeletons from "./Skeletons";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { SubmitHandler, useForm } from "react-hook-form"
 import SubletForm from "./SubletForm";
+import SubletCard from "./SubletCard";
 
 
 async function getListings(){
@@ -40,15 +42,14 @@ async function getSublets(){
     const data = doc.data();
     return {
       id: doc.id,
-      image: data.image,
+      photos: data.photos,
       address: data.address,
       price: data.price,
-      link: data.link,
-      beds: data.beds,
+      bedsSubleased: data.bedsSubleased,
+      bedsTotal: data.bedsTotal,
       baths: data.baths,
-      availableDate: data.availableDate,
-      source: data.source
-    } as House;
+      availableDate: data.availableDate.toDate(),
+    } as Sublet;
   });
   return listings;
 }
@@ -66,7 +67,7 @@ type Inputs = {
 
 export default function ListingContainer({showListings}: {showListings: boolean}) {
   const { data: listings, isLoading, error } = useSWR<House[]>("listings", getListings);
-  const { data: sublets, isLoading: loadingSublet, error: errorSublet } = useSWR<House[]>("sublets", getSublets);
+  const { data: sublets, isLoading: loadingSublet, error: errorSublet } = useSWR<Sublet[]>("sublets", getSublets);
   const [beds, setBeds] = useState<number[]>([]);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [source, setSource] = useState<string[]>([]);
@@ -87,7 +88,7 @@ export default function ListingContainer({showListings}: {showListings: boolean}
   });
   
   const filteredSublets = sublets?.filter((listing)=>{
-    if(beds.length > 0 && !beds.includes(Number(listing.beds))){
+    if(beds.length > 0 && !beds.includes(Number(listing.bedsSubleased))){
       return false;
     }
     if(maxPrice && listing.price > maxPrice){
@@ -162,7 +163,7 @@ export default function ListingContainer({showListings}: {showListings: boolean}
               return <HouseCard key={listing.id} {...listing}/>
           })}
           {!showListings && filteredSublets?.map((listing)=>{
-              return <HouseCard key={listing.id} {...listing}/>
+              return <SubletCard key={listing.id} {...listing}/>
           })}
       </div>
     </>
