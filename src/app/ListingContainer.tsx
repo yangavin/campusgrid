@@ -49,6 +49,8 @@ async function getSublets(){
       bedsTotal: data.bedsTotal,
       baths: data.baths,
       availableDate: data.availableDate.toDate(),
+      endDate: data.endDate.toDate(),
+      contact: data.contact,
     } as Sublet;
   });
   return listings;
