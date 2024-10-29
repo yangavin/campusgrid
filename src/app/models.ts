@@ -12,6 +12,7 @@ export default interface House {
 export interface Sublet {
   id: string;
   poster: string;
+  userId: string;
   address: string;
   price: number;
   bedsSubleased: number;
@@ -25,7 +26,7 @@ export interface Sublet {
 }
 
 export interface UserData {
-  id: string;
+  uid: string;
   name: string;
   email: string;
   posted: boolean;

@@ -13,12 +13,14 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebase-dev";
 import { DialogClose } from "@/components/ui/dialog";
 import { UserContext } from "./page";
+import { getFirestore, doc, setDoc, addDoc, collection} from "firebase/firestore";
+import { db } from "./firebase-dev";
 
 type Inputs = {
   address: string;
   price: number;
   bedsSubleased: string;
-  totalBeds: string;
+  bedsTotal: string;
   baths: string;
   availableDate: Date | undefined;
   endDate: Date | undefined;
@@ -39,10 +41,10 @@ export default function SubletForm() {
         const formData = {
           ...data,
           photos: photoUrls,
-          poster: userData?.name
+          poster: userData?.name,
+          userId: userData?.uid
         };
-        console.log(formData)
-        // await axios.post("http://localhost:3001", formData);
+        const docRef = await addDoc(collection(db, "sublets"), formData);
       } catch (error) {
         console.error("Error submitting form:", error);
       }
@@ -94,8 +96,8 @@ export default function SubletForm() {
 
         <div>
           <Label>Total Beds</Label>
-          <Input {...register("totalBeds", { required: true })} />
-          {errors.totalBeds && <span className="text-red-400">This field is required</span>}
+          <Input {...register("bedsTotal", { required: true })} />
+          {errors.bedsTotal && <span className="text-red-400">This field is required</span>}
         </div>
 
         <div>
@@ -154,9 +156,7 @@ export default function SubletForm() {
           {errors.contact && <span className="text-red-400">This field is required</span>}
         </div>
 
-        <DialogClose>
-            <Button type="submit">Submit</Button>
-        </DialogClose>
+          <Button type="submit">Submit</Button>
       </form>
     </div>
   );

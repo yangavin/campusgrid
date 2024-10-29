@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import HouseCard from "./HouseCard";
 import House from "./models";
 import {Sublet} from "./models"
@@ -70,8 +70,10 @@ type Inputs = {
 type Prop = {
   showListings: boolean
 }
+import { UserContext } from "./page";
 
 export default function ListingContainer({showListings}: Prop) {
+  const userData = useContext(UserContext);
   const { data: listings, isLoading, error } = useSWR<House[]>("listings", getListings);
   const { data: sublets, isLoading: loadingSublet, error: errorSublet } = useSWR<Sublet[]>("sublets", getSublets);
   const [beds, setBeds] = useState<number[]>([]);

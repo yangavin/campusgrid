@@ -3,7 +3,7 @@
 import ListingContainer from "./ListingContainer";
 import { ModeToggle } from "./ThemeButton";
 import { signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
-import { auth, analytics, admissionLink } from "./firebase-dev";
+import { auth, analytics, admissionLink, db} from "./firebase-dev";
 import  { Button } from "@/components/ui/button";
 import { createContext, useState } from "react";
 import { setUserProperties } from "firebase/analytics";
@@ -11,31 +11,31 @@ import useSWR from "swr";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import { UserData } from "./models";
 
-const db = getFirestore();
-
-const loadUserData = async (userId: string, data: any) => {
+const loadUserData = async (user: User | null): Promise<UserData | null> => {
+  if (!user) return null;
   try{
-    const userRef = doc(db, "users", userId);
+    const userRef = doc(db, "users", user.uid);
     const docSnap = await getDoc(userRef);
 
     if (!docSnap.exists()) {
         // Save new user data if it’s the first sign-up
-        await setDoc(userRef, data);
+        await setDoc(userRef, {uid: user.uid, email: user.email, name: user.displayName});
     }
+    return docSnap.data() as UserData;
   } catch (err){
-    console.log(err)
+      console.log(err)
+      return null;
   }
 };
 
-
 export const UserContext = createContext<UserData | null>(null);
+
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const {data: userData, isLoading: loadingUserData, error: userDataError} = useSWR(user, async ()=>loadUserData(user), {revalidateOnFocus: false});
   const [loadingUser, setLoadingUser] = useState(true);
   const [showListings, setShowListings] = useState(true);
   const {data: isAdmitted, isLoading: checkingAdmission, error: admissionError} = useSWR(user, async ()=>getAdmission(user?.email!), {revalidateOnFocus: false});
-
   auth.onAuthStateChanged(async (user) => {
     if (user) {
       setUser(user);
@@ -65,13 +65,7 @@ async function getAdmission(email: string | null){
 
   const signIn = async () =>{
     const result = await signInWithPopup(auth, new GoogleAuthProvider())
-    const user = result.user
-    await loadUserData(user.uid, {name: user.displayName, email: user.email});
-
-    const userRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userRef); 
-    setUser(user);
-    setUserData(docSnap.data() as UserData);
+    setUser(result.user);
   }
   let status: string;
   if (checkingAdmission || loadingUser) status = "loading"
@@ -80,14 +74,13 @@ async function getAdmission(email: string | null){
   else status = "authorized"
 
   return (
-    <UserContext.Provider value={userData}>
+    <UserContext.Provider value={userData ? userData : null}>
         <div className="flex justify-between m-4">
           <ModeToggle/>
           {(status === "unadmitted" || status === "authorized") && (
             <Button onClick={()=>{
               auth.signOut();
               setUser(null);
-              setUserData(null);
             }}>
                 Log out
             </Button>
