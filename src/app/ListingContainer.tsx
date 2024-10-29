@@ -46,6 +46,7 @@ async function getSublets(){
       photos: data.photos,
       address: data.address,
       price: data.price,
+      description: data.description,
       bedsSubleased: data.bedsSubleased,
       bedsTotal: data.bedsTotal,
       baths: data.baths,
@@ -169,6 +170,7 @@ export default function ListingContainer({showListings}: Prop) {
               return <HouseCard key={listing.id} {...listing}/>
           })}
           {!showListings && filteredSublets?.map((listing)=>{
+              console.log(listing)
               return <SubletCard key={listing.id} {...listing}/>
           })}
       </div>

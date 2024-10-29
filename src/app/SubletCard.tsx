@@ -21,6 +21,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useMediaQuery } from 'usehooks-ts'
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 
 const formatter = new Intl.NumberFormat('en-US', {
@@ -28,6 +29,13 @@ const formatter = new Intl.NumberFormat('en-US', {
     currency: 'USD',
     trailingZeroDisplay: 'stripIfInteger'
 });
+const dateFormatter = (date: Date) =>{
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short', 
+        day: 'numeric',
+    });
+}
 
 export default function SubletCard({
     id,
@@ -78,14 +86,13 @@ export default function SubletCard({
                                 <p className="text-xl">Beds Subleased: {bedsSubleased}/{bedsTotal}</p>
                                 {baths && <p>Baths: {baths}</p>}
                             </div>
-                            {availableDate && <p>Available: {availableDate.toDateString()}</p>}
-                            {endDate && <p>End Date: {endDate.toDateString()}</p>}
-                            <p>{description}</p>
+                            {availableDate && <p>Available: {dateFormatter(availableDate)}</p>}
+                            {endDate && <p>End Date: {dateFormatter(endDate)}</p>}
                         </CardContent>
                     </Card>
                 </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[1000px]">
+            <DialogContent className="sm:max-w-[1000px] max-h-[98%] overflow-y-scroll">
                 <DialogHeader>
                     <DialogTitle>{address}</DialogTitle>
                     <DialogDescription>{formatter.format(price)}</DialogDescription>
@@ -118,9 +125,13 @@ export default function SubletCard({
                     </Carousel>
                     <p className="text-xl">Beds Subleased: {bedsSubleased}/{bedsTotal}</p>
                     {baths && <p>Baths: {baths}</p>}
-                    {availableDate && <p>Available: {availableDate.toDateString()}</p>}
-                    {endDate && <p>End Date: {endDate.toDateString()}</p>}
-                    <p className="mb-4">{description}</p>
+                    {availableDate && <p>Available: {dateFormatter(availableDate)}</p>}
+                    {endDate && <p>End Date: {dateFormatter(endDate)}</p>}
+                    <Alert className='my-8 p-5'>
+                        <AlertDescription className='text-center text-md '>
+                            {description}
+                        </AlertDescription>
+                    </Alert>
                     <p className="font-bold">Contact: {contact}</p>
                     <p className="font-bold">Posted by: {poster}</p>
                 </div>
