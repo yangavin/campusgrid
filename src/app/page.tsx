@@ -39,18 +39,14 @@ export const UserContext = createContext<UserData | null>(null);
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
+  const [showListings, setShowListings] = useState(true); // Default view is "Listings"
+  const [loadingUser, setLoadingUser] = useState(true);
   const { data: userData, isLoading: loadingUserData, error: userDataError } = useSWR(
     user,
     async () => loadUserData(user),
     { revalidateOnFocus: false }
   );
-  const [loadingUser, setLoadingUser] = useState(true);
-  const [showListings, setShowListings] = useState(true); // Default view is "Listings"
-  const { data: isAdmitted, isLoading: checkingAdmission, error: admissionError } = useSWR(
-    user,
-    async () => getAdmission(user?.email!),
-    { revalidateOnFocus: false }
-  );
+
 
   auth.onAuthStateChanged(async (user) => {
     if (user) {
@@ -61,40 +57,17 @@ export default function Home() {
     setLoadingUser(false);
   });
 
-  async function getAdmission(email: string | null) {
-    if (!email) {
-      return false;
-    }
-    const res = await fetch(admissionLink + `?email=${email}`);
-    const admission = await res.text();
-    if (admission === "true") {
-      const result = await analytics;
-      if (result) {
-        setUserProperties(result, {
-          email: user?.email,
-        });
-        return true;
-      }
-    }
-    return false;
-  }
-
   const signIn = async () => {
     const result = await signInWithPopup(auth, new GoogleAuthProvider());
     setUser(result.user);
   };
 
-  let status: string;
-  if (checkingAdmission || loadingUser) status = "loading";
-  else if (!user) status = "unauthenticated";
-  else if (!isAdmitted) status = "unadmitted";
-  else status = "authorized";
 
   return (
     <UserContext.Provider value={userData ? userData : null}>
       <div className="flex justify-between m-4">
         <ModeToggle />
-        {(status === "unadmitted" || status === "authorized") && (
+        {(user) && (
           <Button
             onClick={() => {
               auth.signOut();
@@ -120,31 +93,18 @@ export default function Home() {
         <h2 className="text-center">We value your feedback and we always respond!</h2>
       </div>
 
-      {status === "loading" && (
-        <div className="flex flex-wrap gap-4 justify-center">
-          <Skeletons />
-        </div>
-      )}
 
-      {status === "unauthenticated" && (
+      {!user && (
         <div className="flex flex-col items-center justify-center gap-8">
-          <Button onClick={signIn}>Sign in with Google</Button>
+          {loadingUser ? (
+            <p>Loading...</p>
+          ) : (
+            <Button onClick={signIn}>Sign in with Google</Button>
+          )}
         </div>
       )}
 
-      {status === "unadmitted" && (
-        <div className="flex flex-col items-center justify-center gap-8">
-          <a
-            className="text-xl text-blue-400 underline"
-            href="https://forms.gle/P7VtFqQsA5tacDpaA"
-            target="_blank"
-          >
-            Join our waitlist to test our beta!
-          </a>
-        </div>
-      )}
-
-      {status === "authorized" && (
+      {user && (
         <Tabs
           defaultValue="listings"
           className="w-full flex flex-col items-center"
@@ -154,11 +114,11 @@ export default function Home() {
             <TabsTrigger value="listings">Listings</TabsTrigger>
             <TabsTrigger value="sublets">Sublets</TabsTrigger>
           </TabsList>
-          <TabsContent value="listings">
-            {showListings && <ListingContainer showListings={showListings} />}
+          <TabsContent value="listings" className="w-full">
+            <ListingContainer showListings={true} />
           </TabsContent>
-          <TabsContent value="sublets">
-            {!showListings && <ListingContainer showListings={showListings} />}
+          <TabsContent value="sublets" className="w-full">
+            <ListingContainer showListings={false} />
           </TabsContent>
         </Tabs>
       )}
