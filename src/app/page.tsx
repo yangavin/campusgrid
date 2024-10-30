@@ -8,8 +8,9 @@ import  { Button } from "@/components/ui/button";
 import { createContext, useState } from "react";
 import { setUserProperties } from "firebase/analytics";
 import useSWR from "swr";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { UserData } from "./models";
+import Skeletons from "./Skeletons";
 
 const loadUserData = async (user: User | null): Promise<UserData | null> => {
   if (!user) return null;
@@ -95,11 +96,15 @@ async function getAdmission(email: string | null){
         <h2 className="text-center">We value your feedback and we always respond!</h2>
       </div>
         <div className="mb-10 flex justify-center">
-          {showListings && (status !== "loading") && <Button onClick={()=>setShowListings(false)}>Go to Sublets</Button>}
-          {!showListings && (status !== "loading") && <Button onClick={()=>setShowListings(true)}>Go to Listings</Button>}
+          {showListings && (status === "authorized") && <Button onClick={()=>setShowListings(false)}>Go to Sublets</Button>}
+          {!showListings && (status === "authorized") && <Button onClick={()=>setShowListings(true)}>Go to Listings</Button>}
         </div>
   
-      {status === "loading" && <h2 className="text-center">Loading...</h2>}
+      {status === "loading" && (
+        <div className="flex flex-wrap gap-4 justify-center">
+          <Skeletons/>
+        </div>
+      )}
 
       {status === "unauthenticated" && (
         <div className="flex flex-col items-center justify-center gap-8">

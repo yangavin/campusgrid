@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Sublet } from './models'; // Assuming the Sublet interface is in models.ts
 import { logEvent } from 'firebase/analytics';
 import { analytics } from './firebase-dev';
@@ -22,6 +22,9 @@ import {
 } from "@/components/ui/carousel";
 import { useMediaQuery } from 'usehooks-ts'
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { db } from "./firebase-dev";
+import { doc, collection, deleteDoc} from "firebase/firestore";
+import { UserContext } from './page';
 
 
 const formatter = new Intl.NumberFormat('en-US', {
@@ -37,8 +40,13 @@ const dateFormatter = (date: Date) =>{
     });
 }
 
+interface Props{
+    refetch: () => void
+}
+
 export default function SubletCard({
     id,
+    userId,
     poster,
     address,
     price,
@@ -49,10 +57,13 @@ export default function SubletCard({
     endDate,
     photos,
     description,
-    contact
-}: Sublet) {
+    contact,
+    refetch
+}: Sublet & Props) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)')
+    const [isDeleting, setIsDeleting] = useState(false);
+    const userData = useContext(UserContext);
 
     const handleOpen = () => {
         setIsDialogOpen(true);
@@ -67,6 +78,18 @@ export default function SubletCard({
             }
         });
     };
+
+    const deleteSublet = async () => {
+        setIsDeleting(true);
+        try {
+            await deleteDoc(doc(db, "sublets", id));
+            setIsDialogOpen(false);
+            setIsDeleting(false);
+            refetch();
+        } catch (error) {
+            console.error("Error deleting sublet:", error)
+        }
+    }
 
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -93,51 +116,60 @@ export default function SubletCard({
                 </div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[1000px] max-h-[98%] overflow-y-scroll">
-                <DialogHeader>
-                    <DialogTitle>{address}</DialogTitle>
-                    <DialogDescription>{formatter.format(price)}</DialogDescription>
-                </DialogHeader>
-                <div className="p-4 flex flex-col items-center">
-                    <Carousel className="w-full max-w-lg mb-4">
-                        <CarouselContent>
-                            {photos.map((photo, index) => (
-                                <CarouselItem key={index}>
-                                    <div className="p-1">
-                                        <Card>
-                                            <CardContent className="flex items-center justify-center p-6">
-                                                <img
-                                                    src={photo}
-                                                    alt={`House photo ${index + 1}`}
-                                                    className="w-full h-64 object-contain rounded-sm" // Adjusting object-fit here
-                                                />
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                </CarouselItem>
-                            ))}
-                        </CarouselContent>
-                        {isDesktop && (
-                            <>
-                                <CarouselPrevious />
-                                <CarouselNext />
-                            </>
-                        )}
-                    </Carousel>
-                    <p className="text-xl">Beds Subleased: {bedsSubleased}/{bedsTotal}</p>
-                    {baths && <p>Baths: {baths}</p>}
-                    {availableDate && <p>Available: {dateFormatter(availableDate)}</p>}
-                    {endDate && <p>End Date: {dateFormatter(endDate)}</p>}
-                    <Alert className='my-8 p-5'>
-                        <AlertDescription className='text-center text-md '>
-                            {description}
-                        </AlertDescription>
-                    </Alert>
-                    <p className="font-bold">Contact: {contact}</p>
-                    <p className="font-bold">Posted by: {poster}</p>
-                </div>
-                <DialogFooter>
-                    <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
-                </DialogFooter>
+                {isDeleting ? (
+                    <p>Deleting...</p>
+                ) : (
+                    <>
+                        <DialogHeader>
+                            <DialogTitle>{address}</DialogTitle>
+                            <DialogDescription>{formatter.format(price)}</DialogDescription>
+                        </DialogHeader>
+                        <div className="p-4 flex flex-col items-center">
+                            <Carousel className="w-full max-w-lg mb-4">
+                                <CarouselContent>
+                                    {photos.map((photo, index) => (
+                                        <CarouselItem key={index}>
+                                            <div className="p-1">
+                                                <Card>
+                                                    <CardContent className="flex items-center justify-center p-6">
+                                                        <img
+                                                            src={photo}
+                                                            alt={`House photo ${index + 1}`}
+                                                            className="w-full h-64 object-contain rounded-sm" // Adjusting object-fit here
+                                                        />
+                                                    </CardContent>
+                                                </Card>
+                                            </div>
+                                        </CarouselItem>
+                                    ))}
+                                </CarouselContent>
+                                {isDesktop && (
+                                    <>
+                                        <CarouselPrevious />
+                                        <CarouselNext />
+                                    </>
+                                )}
+                            </Carousel>
+                            <p className="text-xl">Beds Subleased: {bedsSubleased}/{bedsTotal}</p>
+                            {baths && <p>Baths: {baths}</p>}
+                            {availableDate && <p>Available: {dateFormatter(availableDate)}</p>}
+                            {endDate && <p>End Date: {dateFormatter(endDate)}</p>}
+                            <Alert className='my-8 p-5'>
+                                <AlertDescription className='text-center text-md '>
+                                    {description}
+                                </AlertDescription>
+                            </Alert>
+                            <p className="font-bold">Contact: {contact}</p>
+                            <p className="font-bold">Posted by: {poster}</p>
+                        </div>
+                        <DialogFooter className='flex justify-between'>
+                            {userData && userData.uid === userId && (
+                                <Button variant="destructive" onClick={deleteSublet}>Delete</Button>
+                            )}
+                            <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
+                        </DialogFooter>
+                </>
+                )}
             </DialogContent>
         </Dialog>
     );

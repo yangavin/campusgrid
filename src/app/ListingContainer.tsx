@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label"
 import Skeletons from "./Skeletons";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { SubmitHandler, useForm } from "react-hook-form"
 import SubletForm from "./SubletForm";
 import SubletCard from "./SubletCard";
 
@@ -42,6 +41,7 @@ async function getSublets(){
     const data = doc.data();
     return {
       id: doc.id,
+      userId: data.userId,
       poster: data.poster,
       photos: data.photos,
       address: data.address,
@@ -71,15 +71,16 @@ type Inputs = {
 type Prop = {
   showListings: boolean
 }
-import { UserContext } from "./page";
 
 export default function ListingContainer({showListings}: Prop) {
-  const userData = useContext(UserContext);
-  const { data: listings, isLoading, error } = useSWR<House[]>("listings", getListings);
-  const { data: sublets, isLoading: loadingSublet, error: errorSublet } = useSWR<Sublet[]>("sublets", getSublets);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [refetchToggle, setRefetchToggle] = useState(false);
   const [beds, setBeds] = useState<number[]>([]);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [source, setSource] = useState<string[]>([]);
+  const { data: listings, isLoading, error } = useSWR<House[]>("listings", getListings);
+  const { data: sublets, isLoading: loadingSublet, error: errorSublet } = useSWR<Sublet[]>(String(refetchToggle), getSublets);
 
   const filteredListings = listings?.filter((listing)=>{
     if(beds.length > 0 && !beds.includes(Number(listing.beds))){
@@ -145,14 +146,14 @@ export default function ListingContainer({showListings}: Prop) {
         )}
         {!showListings && (
           <div className="flex justify-center mb-10">
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button>Post Sublet</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Sublet Details</DialogTitle>
-                  <SubletForm/>
+                  <SubletForm isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} closeDialog={()=>setIsDialogOpen(false)} refetch={()=>setRefetchToggle(!refetchToggle)}/>
                 </DialogHeader>
               </DialogContent>
             </Dialog>
@@ -160,7 +161,8 @@ export default function ListingContainer({showListings}: Prop) {
         )}
 
       <h2 className="text-center mb-3">
-        {filteredListings ? `${filteredListings.length} listings` : "Loading listings..."}
+        {showListings && !isLoading && (filteredListings?.length ? <p>{filteredListings.length} listings</p> : <p>No listings found</p>)}
+        {!showListings && !isLoading && (filteredSublets?.length ? <p>{filteredSublets.length} listings</p> : <p>No listings found</p>)}
       </h2>
 
       <div className="flex flex-wrap gap-4 justify-center">
@@ -170,8 +172,7 @@ export default function ListingContainer({showListings}: Prop) {
               return <HouseCard key={listing.id} {...listing}/>
           })}
           {!showListings && filteredSublets?.map((listing)=>{
-              console.log(listing)
-              return <SubletCard key={listing.id} {...listing}/>
+              return <SubletCard key={listing.id} {...listing} refetch={()=>setRefetchToggle(!refetchToggle)}/>
           })}
       </div>
     </>

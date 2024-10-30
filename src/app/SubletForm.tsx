@@ -11,9 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebase-dev";
-import { DialogClose } from "@/components/ui/dialog";
 import { UserContext } from "./page";
-import { getFirestore, doc, setDoc, addDoc, collection} from "firebase/firestore";
+import { addDoc, collection} from "firebase/firestore";
 import { db } from "./firebase-dev";
 
 type Inputs = {
@@ -29,7 +28,14 @@ type Inputs = {
   photos: FileList;
 };
 
-export default function SubletForm() {
+type Props = {
+  isSubmitting: boolean;
+  setIsSubmitting: (isSubmitting: boolean) => void;
+  closeDialog: () => void;
+  refetch: () => void;
+}
+
+export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, refetch}: Props) {
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<Inputs>();
     const [date, setDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
@@ -37,6 +43,7 @@ export default function SubletForm() {
   
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
       try {
+        setIsSubmitting(true);
         const photoUrls = await uploadPhotos(data.photos);
         const formData = {
           ...data,
@@ -44,7 +51,10 @@ export default function SubletForm() {
           poster: userData?.name,
           userId: userData?.uid
         };
-        const docRef = await addDoc(collection(db, "sublets"), formData);
+        await addDoc(collection(db, "sublets"), formData);
+        setIsSubmitting(false);
+        closeDialog()
+        refetch()
       } catch (error) {
         console.error("Error submitting form:", error);
       }
@@ -72,7 +82,13 @@ export default function SubletForm() {
       setEndDate(selectedEndDate || undefined);
       setValue("endDate", selectedEndDate || undefined);
     };
-
+    if (isSubmitting) {
+      return (
+        <div className="flex flex-col items-center justify-center p-4 space-y-4">
+          <p>Submitting...</p>
+        </div>
+      )
+    }
   return (
     <div className="max-h-[600px] overflow-y-auto p-4 border rounded-md">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -90,19 +106,19 @@ export default function SubletForm() {
 
         <div>
           <Label>Beds Subleased</Label>
-          <Input {...register("bedsSubleased", { required: true })} />
+          <Input {...register("bedsSubleased", { required: true })} type="number" />
           {errors.bedsSubleased && <span className="text-red-400">This field is required</span>}
         </div>
 
         <div>
           <Label>Total Beds</Label>
-          <Input {...register("bedsTotal", { required: true })} />
+          <Input {...register("bedsTotal", { required: true })} type="number" />
           {errors.bedsTotal && <span className="text-red-400">This field is required</span>}
         </div>
 
         <div>
           <Label>Baths</Label>
-          <Input {...register("baths", { required: true })} />
+          <Input {...register("baths", { required: true })} type="number" />
           {errors.baths && <span className="text-red-400">This field is required</span>}
         </div>
 
@@ -140,13 +156,13 @@ export default function SubletForm() {
 
         <div>
           <Label>House Photos</Label>
-          <Input type="file" accept="image/jpeg, image/jpg, image/png, image/heic, image/webp" multiple {...register("photos")} />
+          <Input required type="file" accept="image/jpeg, image/jpg, image/png, image/heic, image/webp" multiple {...register("photos")} />
           {errors.photos && <span className="text-red-400">This field is required</span>}
         </div>
 
         <div>
           <Label>Description</Label>
-          <Textarea {...register("description", { required: true })} placeholder="Describe your sublet..."/>
+          <Textarea {...register("description", { required: true })} placeholder="Describe your sublet..." rows={5}/>
           {errors.description && <span className="text-red-400">This field is required</span>}
         </div>
 
