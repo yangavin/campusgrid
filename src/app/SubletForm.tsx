@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CalendarIcon } from "@radix-ui/react-icons";
-import { format } from "date-fns";
+import { format, isAfter } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebase-dev";
 import { UserContext } from "./page";
-import { addDoc, collection} from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { db } from "./firebase-dev";
 
 type Inputs = {
@@ -36,10 +36,10 @@ type Props = {
 }
 
 export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, refetch}: Props) {
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm<Inputs>();
+    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<Inputs>();
     const [date, setDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
-    const userData = useContext(UserContext)
+    const userData = useContext(UserContext);
   
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
       try {
@@ -53,8 +53,8 @@ export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, 
         };
         await addDoc(collection(db, "sublets"), formData);
         setIsSubmitting(false);
-        closeDialog()
-        refetch()
+        closeDialog();
+        refetch();
       } catch (error) {
         console.error("Error submitting form:", error);
       }
@@ -62,14 +62,12 @@ export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, 
   
     const uploadPhotos = async (photos: FileList): Promise<string[]> => {
       const photoUrls: string[] = [];
-  
       for (const photo of Array.from(photos)) {
         const storageRef = ref(storage, `photos/${photo.name}`);
         await uploadBytes(storageRef, photo);
         const downloadUrl = await getDownloadURL(storageRef);
         photoUrls.push(downloadUrl);
       }
-  
       return photoUrls;
     };
   
@@ -82,6 +80,7 @@ export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, 
       setEndDate(selectedEndDate || undefined);
       setValue("endDate", selectedEndDate || undefined);
     };
+
     if (isSubmitting) {
       return (
         <div className="flex flex-col items-center justify-center p-4 space-y-4">
@@ -89,6 +88,7 @@ export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, 
         </div>
       )
     }
+    
   return (
     <div className="max-h-[600px] overflow-y-auto p-4 border rounded-md">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -106,20 +106,20 @@ export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, 
 
         <div>
           <Label>Beds Subleased</Label>
-          <Input {...register("bedsSubleased", { required: true })} type="number" />
-          {errors.bedsSubleased && <span className="text-red-400">This field is required</span>}
+          <Input {...register("bedsSubleased", { required: true, min: 1, max: 7 })} type="number" />
+          {errors.bedsSubleased && <span className="text-red-400">Must be between 1 and 7</span>}
         </div>
 
         <div>
           <Label>Total Beds</Label>
-          <Input {...register("bedsTotal", { required: true })} type="number" />
-          {errors.bedsTotal && <span className="text-red-400">This field is required</span>}
+          <Input {...register("bedsTotal", { required: true, min: 1, max: 7 })} type="number" />
+          {errors.bedsTotal && <span className="text-red-400">Must be between 1 and 7</span>}
         </div>
 
         <div>
           <Label>Baths</Label>
-          <Input {...register("baths", { required: true })} type="number" />
-          {errors.baths && <span className="text-red-400">This field is required</span>}
+          <Input {...register("baths", { required: true, min: 1, max: 7 })} type="number" />
+          {errors.baths && <span className="text-red-400">Must be between 1 and 7</span>}
         </div>
 
         <div>
@@ -132,13 +132,12 @@ export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, 
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="single" selected={date} onSelect={handleDateSelect} initialFocus />
+              <Calendar mode="single" selected={date} onSelect={handleDateSelect} initialFocus disabled={(date) => date <= new Date()} />
             </PopoverContent>
           </Popover>
-          {errors.availableDate && <span className="text-red-400">This field is required</span>}
+          {errors.availableDate && <span className="text-red-400">This field is required and must be a future date</span>}
         </div>
 
-        {/* End Date Input */}
         <div>
           <Label>End Date (Optional)</Label>
           <Popover>
@@ -149,9 +148,19 @@ export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, 
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="single" selected={endDate} onSelect={handleEndDateSelect} initialFocus />
+            <Calendar
+              mode="single"
+              selected={endDate}
+              onSelect={handleEndDateSelect}
+              initialFocus
+              disabled={(date) => {
+                const availableDate = watch("availableDate");
+                return date <= new Date() || (availableDate ? date <= availableDate : false);
+              }}
+            />
             </PopoverContent>
           </Popover>
+          {errors.endDate && <span className="text-red-400">End date must be after available date</span>}
         </div>
 
         <div>
@@ -172,7 +181,7 @@ export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, 
           {errors.contact && <span className="text-red-400">This field is required</span>}
         </div>
 
-          <Button type="submit">Submit</Button>
+        <Button type="submit">Submit</Button>
       </form>
     </div>
   );
