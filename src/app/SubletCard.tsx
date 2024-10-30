@@ -22,17 +22,17 @@ import {
 } from "@/components/ui/carousel";
 import { useMediaQuery } from 'usehooks-ts'
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { db } from "./firebase-dev";
-import { doc, collection, deleteDoc} from "firebase/firestore";
+import { db, storage } from "./firebase-dev";
+import { doc, getDoc, deleteDoc } from "firebase/firestore";
+import { ref, deleteObject } from "firebase/storage";
 import { UserContext } from './page';
-
 
 const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     trailingZeroDisplay: 'stripIfInteger'
 });
-const dateFormatter = (date: Date) =>{
+const dateFormatter = (date: Date) => {
     return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short', 
@@ -40,8 +40,8 @@ const dateFormatter = (date: Date) =>{
     });
 }
 
-interface Props{
-    refetch: () => void
+interface Props {
+    refetch: () => void;
 }
 
 export default function SubletCard({
@@ -61,7 +61,7 @@ export default function SubletCard({
     refetch
 }: Sublet & Props) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const isDesktop = useMediaQuery('(min-width: 768px)')
+    const isDesktop = useMediaQuery('(min-width: 768px)');
     const [isDeleting, setIsDeleting] = useState(false);
     const userData = useContext(UserContext);
 
@@ -82,12 +82,36 @@ export default function SubletCard({
     const deleteSublet = async () => {
         setIsDeleting(true);
         try {
-            await deleteDoc(doc(db, "sublets", id));
+            // Step 1: Retrieve the sublet document to access the photo URLs
+            const subletDocRef = doc(db, "sublets", id);
+            const subletDoc = await getDoc(subletDocRef);
+            
+            if (subletDoc.exists()) {
+                const data = subletDoc.data();
+                const photoUrls: string[] = data.photos;
+
+                // Step 2: Delete each photo from Firebase Storage
+                const deletePromises = photoUrls.map(async (url) => {
+                    const photoRef = ref(storage, url);
+                    try {
+                        await deleteObject(photoRef);
+                    } catch (error) {
+                        console.error("Error deleting photo:", error);
+                    }
+                });
+
+                // Wait for all photo deletions to complete
+                await Promise.all(deletePromises);
+            }
+
+            // Step 3: Delete the Firestore document
+            await deleteDoc(subletDocRef);
             setIsDialogOpen(false);
-            setIsDeleting(false);
             refetch();
         } catch (error) {
-            console.error("Error deleting sublet:", error)
+            console.error("Error deleting sublet:", error);
+        } finally {
+            setIsDeleting(false);
         }
     }
 
@@ -115,9 +139,9 @@ export default function SubletCard({
                     </Card>
                 </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[1000px] max-h-[98%] overflow-y-scroll">
+            <DialogContent className={`sm:max-w-[1000px] max-h-[98%] ${!isDeleting ? "overflow-y-scroll" : ""}`}>
                 {isDeleting ? (
-                    <p>Deleting...</p>
+                    <p className='text-center'>Deleting...</p>
                 ) : (
                     <>
                         <DialogHeader>
@@ -135,7 +159,7 @@ export default function SubletCard({
                                                         <img
                                                             src={photo}
                                                             alt={`House photo ${index + 1}`}
-                                                            className="w-full h-64 object-contain rounded-sm" // Adjusting object-fit here
+                                                            className="w-full h-64 object-contain rounded-sm"
                                                         />
                                                     </CardContent>
                                                 </Card>
