@@ -167,7 +167,7 @@ export default function ListingContainer({showListings}: Prop) {
 
       <div className="flex flex-wrap gap-4 justify-center">
           {isLoading && <Skeletons/>}
-          {error && <p>Failed to load listings</p>}
+          {/* {error && <p className="text-center">Failed to load listings</p>} */}
           {showListings && filteredListings?.map((listing)=>{
               return <HouseCard key={listing.id} {...listing}/>
           })}
