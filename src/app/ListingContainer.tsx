@@ -14,6 +14,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader } from 
 import { Button } from "@/components/ui/button";
 import SubletForm from "./SubletForm";
 import SubletCard from "./SubletCard";
+import Map from 'react-map-gl';
 
 
 async function getListings(){
@@ -159,6 +160,17 @@ export default function ListingContainer({showListings}: Prop) {
             </Dialog>
           </div>
         )}
+
+      <Map
+      mapboxAccessToken="pk.eyJ1IjoiYWZmeXRvIiwiYSI6ImNtMzExbnVidDBxbWsydG9nN29pb3N3bDcifQ.X9RhpPQwZD2hPNwxU9olPQ"
+      initialViewState={{
+        longitude: -76.4990,
+        latitude: 44.2334,
+        zoom: 13.7
+      }}
+      style={{width: "90vw", height: 600, margin: "auto", borderRadius: 5}}
+      mapStyle="mapbox://styles/mapbox/streets-v12"
+    />
 
       <h2 className="text-center mb-3">
         {showListings && !isLoading && (filteredListings?.length ? <p>{filteredListings.length} listings</p> : <p>No listings found</p>)}

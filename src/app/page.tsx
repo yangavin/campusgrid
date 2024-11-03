@@ -5,7 +5,7 @@ import { ModeToggle } from "./ThemeButton";
 import { signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
 import { auth, analytics, admissionLink, db } from "./firebase-dev";
 import { Button } from "@/components/ui/button";
-import { createContext, useState } from "react";
+import { createContext, useRef, useState, useEffect } from "react";
 import { setUserProperties } from "firebase/analytics";
 import useSWR from "swr";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -121,8 +121,11 @@ export default function Home() {
         //     <ListingContainer showListings={false} />
         //   </TabsContent>
         // </Tabs>
-        <ListingContainer showListings={true} />
+        <>
+          <ListingContainer showListings={true} />
+        </>
       )}
+
     </UserContext.Provider>
   );
 }
