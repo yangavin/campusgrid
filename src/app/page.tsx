@@ -105,22 +105,23 @@ export default function Home() {
       )}
 
       {user && (
-        <Tabs
-          defaultValue="listings"
-          className="w-full flex flex-col items-center"
-          onValueChange={(value) => setShowListings(value === "listings")}
-        >
-          <TabsList className="flex justify-center mb-4">
-            <TabsTrigger value="listings">Listings</TabsTrigger>
-            <TabsTrigger value="sublets">Sublets</TabsTrigger>
-          </TabsList>
-          <TabsContent value="listings" className="w-full">
-            <ListingContainer showListings={true} />
-          </TabsContent>
-          <TabsContent value="sublets" className="w-full">
-            <ListingContainer showListings={false} />
-          </TabsContent>
-        </Tabs>
+        // <Tabs
+        //   defaultValue="listings"
+        //   className="w-full flex flex-col items-center"
+        //   onValueChange={(value) => setShowListings(value === "listings")}
+        // >
+        //   <TabsList className="flex justify-center mb-4">
+        //     <TabsTrigger value="listings">Listings</TabsTrigger>
+        //     <TabsTrigger value="sublets">Sublets</TabsTrigger>
+        //   </TabsList>
+        //   <TabsContent value="listings" className="w-full">
+        //     <ListingContainer showListings={true} />
+        //   </TabsContent>
+        //   <TabsContent value="sublets" className="w-full">
+        //     <ListingContainer showListings={false} />
+        //   </TabsContent>
+        // </Tabs>
+        <ListingContainer showListings={true} />
       )}
     </UserContext.Provider>
   );
