@@ -20,46 +20,21 @@ import {
 import { useAuth } from "../AuthProvider";
 import { useRouter } from "next/navigation";
 
-const loadUserData = async (user: User | null | undefined): Promise<UserData | null | undefined> => {
-  if (!user) return null;
-  try {
-    const userRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userRef);
-
-    if (!docSnap.exists()) {
-      // Save new user data if it’s the first sign-up
-      await setDoc(userRef, { uid: user.uid, email: user.email, name: user.displayName });
-    }
-    return docSnap.data() as UserData;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-};
-
-export const UserContext = createContext<UserData | null | undefined>(null);
-
 export default function Page() {
   const { user } = useAuth();
   const router = useRouter();
   if (!user) router.push("/");
   const [showListings, setShowListings] = useState(true); // Default view is "Listings"
-  const { data: userData, isLoading: loadingUserData, error: userDataError } = useSWR(
-    user,
-    async () => loadUserData(user),
-    { revalidateOnFocus: false }
-  );
 
   function signOut(){
     auth.signOut();
     router.push("/")
   }
-  
-  if (!user){
-    return null;
-  }
+
+  if (!user) return null;
+
   return (
-    <UserContext.Provider value={userData ? userData : null}>
+    <div>
       <div className="flex justify-between m-4">
         <ModeToggle />
         <Button onClick={signOut}>
@@ -99,6 +74,6 @@ export default function Page() {
         </Tabs> */}
 
         <ListingContainer showListings={true} />
-    </UserContext.Provider>
+    </div>
   );
 }
