@@ -4,7 +4,7 @@ import HouseCard from "./HouseCard";
 import House from "./models";
 import {Sublet} from "./models"
 import useSWR from "swr";
-import { db } from "./firebase-dev";
+import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Input } from "@/components/ui/input"

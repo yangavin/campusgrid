@@ -37,7 +37,7 @@ if (!process.env.NEXT_PUBLIC_PRODUCTION) {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const analytics = isSupported().then((supported) =>
+export const checkAnalytics = isSupported().then((supported) =>
   supported ? getAnalytics(app) : null
 );
 export const db = getFirestore(app);

@@ -1,7 +1,7 @@
 import House from './models';
 import Link from 'next/link';
 import { logEvent } from 'firebase/analytics';
-import { analytics } from './firebase-dev';
+import { checkAnalytics } from '../firebase';
 import {
     Card,
     CardContent,
@@ -17,17 +17,16 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 export default function HouseCard({id, image, address, price, link, baths, beds, availableDate, source}: House){
     return (
-        <Link href={link} target="_blank" className="xl:w-1/5 lg:w-1/4 md:1/2 w-9/12 animate-fade-in" onClick={()=>{
-            analytics.then(ana=>{
-                if (ana){
-                    logEvent(ana, 'select-content', {
-                        content_type: 'listing',
-                        item_id: id,
-                        beds: beds,
-                        source: source
-                    })
-                }
-            })
+        <Link href={link} target="_blank" className="xl:w-1/5 lg:w-1/4 md:1/2 w-9/12 animate-fade-in" onClick={async ()=>{
+            const analytics = await checkAnalytics;
+            if (analytics){
+                logEvent(analytics, 'select-content', {
+                    content_type: 'listing',
+                    item_id: id,
+                    beds: beds,
+                    source: source
+                })
+            }
         }}>
             <Card className='h-96'>
                 <CardHeader>

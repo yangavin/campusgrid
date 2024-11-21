@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Sublet } from './models'; // Assuming the Sublet interface is in models.ts
 import { logEvent } from 'firebase/analytics';
-import { analytics } from './firebase-dev';
+import { checkAnalytics, db, storage } from '../firebase';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/carousel";
 import { useMediaQuery } from 'usehooks-ts'
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { db, storage } from "./firebase-dev";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
 import { UserContext } from './page';
@@ -65,18 +64,17 @@ export default function SubletCard({
     const [isDeleting, setIsDeleting] = useState(false);
     const userData = useContext(UserContext);
 
-    const handleOpen = () => {
+    const handleOpen = async () => {
         setIsDialogOpen(true);
-        analytics.then(ana => {
-            if (ana) {
-                logEvent(ana, 'select-content', {
-                    content_type: 'sublet',
-                    item_id: id,
-                    bedsSubleased: bedsSubleased,
-                    bedsTotal: bedsTotal,
-                });
-            }
-        });
+        const analytics = await checkAnalytics;
+        if (analytics) {
+            logEvent(analytics, 'select-content', {
+                content_type: 'sublet',
+                item_id: id,
+                bedsSubleased: bedsSubleased,
+                bedsTotal: bedsTotal,
+            });
+        }
     };
 
     const deleteSublet = async () => {

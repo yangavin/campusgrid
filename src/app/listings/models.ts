@@ -29,5 +29,5 @@ export interface UserData {
   uid: string;
   name: string;
   email: string;
-  posted: boolean;
+  posted?: boolean;
 }
