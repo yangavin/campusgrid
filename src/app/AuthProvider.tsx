@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { UserData } from "./listings/models";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./firebase";
+import { checkAnalytics } from "./firebase";
+import { logEvent } from "firebase/analytics";
 
 interface AuthContextType {
   user: UserData | null;
@@ -42,6 +44,8 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
       if (user) {
         setUser(await loadUserData(user));
+        const analytics = await checkAnalytics
+        if (analytics) logEvent(analytics!, "login");
       } else {
         setUser(null);
       }

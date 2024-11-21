@@ -3,8 +3,9 @@
 import { useAuth } from "./AuthProvider"
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button";
-import { auth } from "./firebase";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth, checkAnalytics } from "./firebase";
+import { signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
+import { logEvent } from "firebase/analytics";
 
 
 export default function Page(){
@@ -14,7 +15,12 @@ export default function Page(){
 
     const signIn = async () => {
         const provider = new GoogleAuthProvider();
-        await signInWithPopup(auth, provider)
+        const result = await signInWithPopup(auth, provider)
+        const additionalInfo = getAdditionalUserInfo(result)
+        if (additionalInfo?.isNewUser) {
+            const analytics = await checkAnalytics;
+            if (analytics) logEvent(analytics, "sign_up");
+        }
         router.push("/listings")
     }
     return (

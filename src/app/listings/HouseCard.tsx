@@ -26,7 +26,7 @@ export default function HouseCard({id, image, address, price, link, baths, beds,
                     beds: beds,
                     source: source
                 })
-            }
+            } 
         }}>
             <Card className='h-96'>
                 <CardHeader>

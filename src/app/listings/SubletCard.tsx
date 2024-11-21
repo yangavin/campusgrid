@@ -24,7 +24,7 @@ import { useMediaQuery } from 'usehooks-ts'
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
-import { UserContext } from './page';
+import { useAuth } from '../AuthProvider';
 
 const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -62,7 +62,7 @@ export default function SubletCard({
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
     const [isDeleting, setIsDeleting] = useState(false);
-    const userData = useContext(UserContext);
+    const { user } = useAuth();
 
     const handleOpen = async () => {
         setIsDialogOpen(true);
@@ -185,7 +185,7 @@ export default function SubletCard({
                             <p className="font-bold">Posted by: {poster}</p>
                         </div>
                         <DialogFooter className='flex justify-between'>
-                            {userData && userData.uid === userId && (
+                            {user && user.uid === userId && (
                                 <Button variant="destructive" onClick={deleteSublet}>Delete</Button>
                             )}
                             <Button onClick={() => setIsDialogOpen(false)}>Close</Button>

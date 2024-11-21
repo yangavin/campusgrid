@@ -11,8 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage, db } from "../firebase";
-import { UserContext } from "./page";
 import { addDoc, collection } from "firebase/firestore";
+import { useAuth } from "../AuthProvider";
 
 type Inputs = {
   address: string;
@@ -38,7 +38,7 @@ export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, 
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<Inputs>();
     const [date, setDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
-    const userData = useContext(UserContext);
+    const { user } = useAuth();
   
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
       try {
@@ -47,8 +47,8 @@ export default function SubletForm({isSubmitting, setIsSubmitting, closeDialog, 
         const formData = {
           ...data,
           photos: photoUrls,
-          poster: userData?.name,
-          userId: userData?.uid
+          poster: user?.name,
+          userId: user?.uid
         };
         await addDoc(collection(db, "sublets"), formData);
         setIsSubmitting(false);
