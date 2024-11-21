@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   const value: AuthContextType = {
     user,
