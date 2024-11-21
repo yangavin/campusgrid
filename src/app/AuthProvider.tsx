@@ -1,6 +1,6 @@
 "use client"
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { getAdditionalUserInfo, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, User } from "firebase/auth";
 import { auth } from "./firebase";
 import { useRouter } from "next/navigation";
 import { UserData } from "./listings/models";
@@ -12,6 +12,7 @@ import { logEvent } from "firebase/analytics";
 interface AuthContextType {
   user: UserData | null;
   loading: boolean;
+  signIn: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,26 +20,31 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 interface AuthProviderProps {
   children: ReactNode;
 }
-const loadUserData = async (user: User | null): Promise<UserData | null> => {
-  if (!user) return null;
-  try {
-    const userRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userRef);
 
-    if (!docSnap.exists()) {
-      // Save new user data if it’s the first sign-up
-      await setDoc(userRef, { uid: user.uid, email: user.email, name: user.displayName });
+const loadUserData = async (user: User | null): Promise<UserData | null> => {
+  if (user) {
+    const userDocRef = doc(db, "users", user.uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      return userDoc.data() as UserData;
+    } else {
+      const newUser: UserData = {
+        uid: user.uid,
+        email: user.email!,
+        name: user.displayName!
+      };
+      await setDoc(userDocRef, newUser);
+      return newUser;
     }
-    return docSnap.data() as UserData;
-  } catch (err) {
-    console.log(err);
-    return null;
   }
+  return null;
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
@@ -53,11 +59,26 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, []);
+
+  const signIn = async () => {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider)
+      const additionalInfo = getAdditionalUserInfo(result)
+      if (additionalInfo?.isNewUser) {
+          const analytics = await checkAnalytics;
+          if (analytics) logEvent(analytics, "sign_up");
+          const userData = await loadUserData(result.user);
+          setUser(userData);
+          setLoading(false)
+          router.replace("/listings")
+      }
+  }
 
   const value: AuthContextType = {
     user,
-    loading
+    loading,
+    signIn,
   };
 
   return (

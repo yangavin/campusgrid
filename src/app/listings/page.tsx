@@ -23,12 +23,12 @@ import { useRouter } from "next/navigation";
 export default function Page() {
   const { user } = useAuth();
   const router = useRouter();
-  if (!user) router.push("/");
+  if (!user) router.replace("/")
   const [showListings, setShowListings] = useState(true); // Default view is "Listings"
 
   function signOut(){
     auth.signOut();
-    router.push("/")
+    router.replace("/")
   }
 
   if (!user) return null;

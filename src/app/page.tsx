@@ -9,20 +9,10 @@ import { logEvent } from "firebase/analytics";
 
 
 export default function Page(){
-    const { user } = useAuth()
+    const { user, signIn } = useAuth()
     const router = useRouter()
     if (user) router.push("/listings")
 
-    const signIn = async () => {
-        const provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(auth, provider)
-        const additionalInfo = getAdditionalUserInfo(result)
-        if (additionalInfo?.isNewUser) {
-            const analytics = await checkAnalytics;
-            if (analytics) logEvent(analytics, "sign_up");
-        }
-        router.push("/listings")
-    }
     return (
         <div>
             <Button onClick={signIn}>Log in</Button>
