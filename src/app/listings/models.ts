@@ -30,4 +30,5 @@ export interface UserData {
   name: string;
   email: string;
   posted?: boolean;
+  lastLoggedIn: String;
 }

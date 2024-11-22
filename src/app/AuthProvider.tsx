@@ -27,12 +27,24 @@ const loadUserData = async (user: User | null): Promise<UserData | null> => {
     const userDoc = await getDoc(userDocRef);
 
     if (userDoc.exists()) {
+      await setDoc(userDocRef, {
+        lastLoggedIn: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+      }, { merge: true });
       return userDoc.data() as UserData;
     } else {
       const newUser: UserData = {
         uid: user.uid,
         email: user.email!,
-        name: user.displayName!
+        name: user.displayName!,
+        lastLoggedIn: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
       };
       await setDoc(userDocRef, newUser);
       return newUser;
