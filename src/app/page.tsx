@@ -3,9 +3,7 @@
 import { useAuth } from "./AuthProvider"
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button";
-import { auth, checkAnalytics } from "./firebase";
-import { signInWithPopup, GoogleAuthProvider, getAdditionalUserInfo } from "firebase/auth";
-import { logEvent } from "firebase/analytics";
+
 
 
 export default function Page(){
