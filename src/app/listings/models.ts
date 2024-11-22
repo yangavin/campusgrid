@@ -8,6 +8,9 @@ export default interface House {
   beds: string;
   availableDate?: string;
   source: string;
+  title?: "string"; // For Kijiji
+  manuallyAdded?: boolean;
+  location: string;
 }
 export interface Sublet {
   id: string;
