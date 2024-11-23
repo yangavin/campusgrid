@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/tabs";
 import { useAuth } from "../AuthProvider";
 import { useRouter } from "next/navigation";
+import MapView from "./MapView";
 
 export default function Page() {
   const { user } = useAuth();

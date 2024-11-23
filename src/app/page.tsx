@@ -3,7 +3,7 @@
 import { useAuth } from "./AuthProvider"
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button";
-
+import Map from "react-map-gl";
 
 
 export default function Page(){

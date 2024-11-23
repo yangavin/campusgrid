@@ -14,6 +14,8 @@ import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogHeader } from 
 import { Button } from "@/components/ui/button";
 import SubletForm from "./SubletForm";
 import SubletCard from "./SubletCard";
+import MapView from "./MapView";
+import Map from "react-map-gl";
 
 
 async function getListings(){
@@ -22,14 +24,7 @@ async function getListings(){
     const data = doc.data();
     return {
       id: doc.id,
-      image: data.image,
-      address: data.address,
-      price: data.price,
-      link: data.link,
-      beds: data.beds,
-      baths: data.baths,
-      availableDate: data.availableDate,
-      source: data.source
+      ...data
     } as House;
   });
   return listings;
@@ -94,6 +89,7 @@ export default function ListingContainer({showListings}: Prop) {
     }
     return true;
   });
+  const filteredListingsWithCoordinates = filteredListings ? filteredListings.filter((house)=>house.coordinates) : []
   
   const filteredSublets = sublets?.filter((listing)=>{
     if(beds.length > 0 && !beds.includes(Number(listing.bedsSubleased))){
@@ -107,29 +103,29 @@ export default function ListingContainer({showListings}: Prop) {
 
   return (
     <>
-    <div className="flex flex-col md:flex-row justify-center gap-10">
-      <div className="flex flex-col items-center mb-10">
-        <Label className="mb-3">Beds</Label>
-        <ToggleGroup type="multiple" variant="outline" onValueChange={(val)=>{
-          setBeds(val.map((v)=>parseInt(v)));
-        }}>
-          <ToggleGroupItem value="1">1</ToggleGroupItem>
-          <ToggleGroupItem value="2">2</ToggleGroupItem>
-          <ToggleGroupItem value="3">3</ToggleGroupItem>
-          <ToggleGroupItem value="4">4</ToggleGroupItem>
-          <ToggleGroupItem value="5">5</ToggleGroupItem>
-          <ToggleGroupItem value="6">6</ToggleGroupItem>
-          <ToggleGroupItem value="7">7</ToggleGroupItem>
-        </ToggleGroup>
-      </div>
+      <div className="flex flex-col md:flex-row justify-center gap-10">
+        <div className="flex flex-col items-center mb-10">
+          <Label className="mb-3">Beds</Label>
+          <ToggleGroup type="multiple" variant="outline" onValueChange={(val)=>{
+            setBeds(val.map((v)=>parseInt(v)));
+          }}>
+            <ToggleGroupItem value="1">1</ToggleGroupItem>
+            <ToggleGroupItem value="2">2</ToggleGroupItem>
+            <ToggleGroupItem value="3">3</ToggleGroupItem>
+            <ToggleGroupItem value="4">4</ToggleGroupItem>
+            <ToggleGroupItem value="5">5</ToggleGroupItem>
+            <ToggleGroupItem value="6">6</ToggleGroupItem>
+            <ToggleGroupItem value="7">7</ToggleGroupItem>
+          </ToggleGroup>
+        </div>
 
-      <div className="flex flex-col items-center mb-10">
-        <Label htmlFor="price" className="mb-3">Max Price</Label>
-        <Input type="number" id="price" className="text-center w-1/2 md:w-full" onChange={({target})=>{
-          setMaxPrice(parseInt(target.value));
-        }}/>
+        <div className="flex flex-col items-center mb-10">
+          <Label htmlFor="price" className="mb-3">Max Price</Label>
+          <Input type="number" id="price" className="text-center w-1/2 md:w-full" onChange={({target})=>{
+            setMaxPrice(parseInt(target.value));
+          }}/>
+        </div>
       </div>
-    </div>
         {showListings && (
           <div className="flex flex-col items-center mb-10">
             <Label className="mb-3">Source</Label>
@@ -142,6 +138,9 @@ export default function ListingContainer({showListings}: Prop) {
               <ToggleGroupItem value="frontenac">Frontenac</ToggleGroupItem>
               <ToggleGroupItem value="kijiji">Kijiji</ToggleGroupItem>
             </ToggleGroup>
+            <div className="my-10">
+              <MapView listings={filteredListingsWithCoordinates}/>
+            </div>
           </div>
         )}
         {!showListings && (
