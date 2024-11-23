@@ -7,6 +7,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Input } from '@/components/ui/input';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -73,6 +74,7 @@ export default function AppSidebar({
 
   return (
     <Sidebar>
+      <SidebarTrigger className="md:hidden" />
       <SidebarContent>
         <div className="flex items-center justify-between p-4">
           <AlertDialog>

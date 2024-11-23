@@ -60,10 +60,6 @@ export default function Layout({
     error,
   } = useSWR<House[]>('listings', getListings);
 
-  function signOut() {
-    auth.signOut();
-    router.replace('/');
-  }
   function setBeds(beds: number[]) {
     setFilter({ ...filter, beds });
   }
@@ -104,6 +100,7 @@ export default function Layout({
           isLoading={isLoading}
           sourceOptions={sourceOptions}
         />
+        <SidebarTrigger className="md:hidden" />
         <main className="flex-grow">{children}</main>
       </SidebarProvider>
     </HouseFilterContext.Provider>
