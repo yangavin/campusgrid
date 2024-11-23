@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { getAdditionalUserInfo, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, User } from "firebase/auth";
 import { auth } from "./firebase";
 import { useRouter } from "next/navigation";
-import { UserData } from "./listings/models";
+import { UserData } from "./models";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import { checkAnalytics } from "./firebase";

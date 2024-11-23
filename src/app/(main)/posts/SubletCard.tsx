@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
-import { Sublet } from './models'; // Assuming the Sublet interface is in models.ts
+import { Sublet } from '@/app/models'; // Assuming the Sublet interface is in models.ts
 import { logEvent } from 'firebase/analytics';
-import { checkAnalytics, db, storage } from '../firebase';
+import { checkAnalytics, db, storage } from '@/app/firebase';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
@@ -24,7 +24,7 @@ import { useMediaQuery } from 'usehooks-ts'
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
-import { useAuth } from '../AuthProvider';
+import { useAuth } from '@/app/AuthProvider';
 
 const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',

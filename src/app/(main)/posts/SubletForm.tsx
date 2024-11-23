@@ -10,9 +10,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage, db } from "../firebase";
+import { storage, db } from "@/app/firebase";
 import { addDoc, collection } from "firebase/firestore";
-import { useAuth } from "../AuthProvider";
+import { useAuth } from "@/app/AuthProvider";
 
 type Inputs = {
   address: string;

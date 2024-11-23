@@ -1,7 +1,7 @@
-import House from './models';
+import House from '@/app/models';
 import Link from 'next/link';
 import { logEvent } from 'firebase/analytics';
-import { checkAnalytics } from '../firebase';
+import { checkAnalytics } from '@/app/firebase';
 import {
     Card,
     CardContent,
