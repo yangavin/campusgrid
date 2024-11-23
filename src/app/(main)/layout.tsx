@@ -2,12 +2,15 @@
 
 import { ModeToggle } from '@/app/ThemeButton';
 import { Button } from '@/components/ui/button';
-import { auth } from '@/app/firebase';
+import { auth, db } from '@/app/firebase';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../AuthProvider';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import AppSidebar from '@/app/(main)/AppSidebar';
 import { useContext, createContext, useState } from 'react';
+import useSWR from 'swr';
+import { collection, getDocs } from 'firebase/firestore';
+import House from '../models';
 
 interface Filter {
   beds: number[];
@@ -15,11 +18,32 @@ interface Filter {
   source: string[];
 }
 
-export const FilterContext = createContext<Filter>({
-  beds: [],
-  maxPrice: null,
-  source: [],
-});
+export const HouseFilterContext = createContext<House[]>([]);
+
+async function getListings() {
+  const querySnapshot = await getDocs(collection(db, 'listings'));
+  const listings = querySnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+    } as House;
+  });
+  listings.forEach((listing) => {
+    if (listing.source === 'frontenac') {
+      listing.image = '/frontenac.png';
+    }
+  });
+  return listings;
+}
+
+const sourceOptions = [
+  'accommodation',
+  'axon',
+  'amberpeak',
+  'frontenac',
+  'kijiji',
+];
 
 export default function Layout({
   children,
@@ -27,9 +51,14 @@ export default function Layout({
   const [filter, setFilter] = useState<Filter>({
     beds: [],
     maxPrice: null,
-    source: [],
+    source: sourceOptions,
   });
   const router = useRouter();
+  const {
+    data: listings,
+    isLoading,
+    error,
+  } = useSWR<House[]>('listings', getListings);
 
   function signOut() {
     auth.signOut();
@@ -45,44 +74,38 @@ export default function Layout({
     setFilter({ ...filter, source });
   }
 
+  const { beds, maxPrice, source } = filter;
+  const filteredListings = listings?.filter((listing) => {
+    if (beds.length > 0 && !beds.includes(Number(listing.beds))) {
+      return false;
+    }
+    if (maxPrice && listing.price > maxPrice) {
+      return false;
+    }
+    if (!source.includes(listing.source)) {
+      return false;
+    }
+    return true;
+  });
+
   const { user } = useAuth();
   if (!user) router.replace('/');
   if (!user) return null;
 
   return (
-    <FilterContext.Provider value={filter}>
+    <HouseFilterContext.Provider value={filteredListings || []}>
       <SidebarProvider>
         <AppSidebar
           {...filter}
           setBeds={setBeds}
           setMaxPrice={setMaxPrice}
           setSource={setSource}
+          filteredListings={filteredListings || []}
+          isLoading={isLoading}
+          sourceOptions={sourceOptions}
         />
-        <main>
-          <SidebarTrigger />
-          <div className="m-4 flex justify-between">
-            <ModeToggle />
-            <Button onClick={signOut}>Log out</Button>
-          </div>
-          <h1 className="my-4 text-center text-5xl">Affyto</h1>
-
-          <div className="mb-10">
-            <h2 className="mb-2 text-center text-xl">
-              <a
-                href="https://www.instagram.com/affyto.housing/"
-                target="_blank"
-                className="text-primary underline"
-              >
-                Shoot us an Instagram DM
-              </a>
-            </h2>
-            <h2 className="text-center">
-              We value your feedback and we always respond!
-            </h2>
-          </div>
-          {children}
-        </main>
+        <main className="flex-grow">{children}</main>
       </SidebarProvider>
-    </FilterContext.Provider>
+    </HouseFilterContext.Provider>
   );
 }

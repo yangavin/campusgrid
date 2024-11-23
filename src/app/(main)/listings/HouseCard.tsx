@@ -25,7 +25,7 @@ export default function HouseCard({
     <Link
       href={link}
       target="_blank"
-      className="md:1/2 w-9/12 animate-fade-in lg:w-1/4 xl:w-1/5"
+      className="w-full animate-fade-in"
       onClick={async () => {
         const analytics = await checkAnalytics;
         if (analytics) {
@@ -41,15 +41,11 @@ export default function HouseCard({
       <Card className="h-96">
         <CardHeader>
           <CardTitle>{address}</CardTitle>
-          {source === 'frontenac' ? (
-            <img src="frontenac.png" alt="frontenac" />
-          ) : (
-            <img
-              src={image}
-              alt="house"
-              className="h-40 w-full rounded-sm object-cover"
-            />
-          )}
+          <img
+            src={image}
+            alt="house"
+            className="m-auto h-52 w-full rounded-sm object-cover object-center"
+          />
           <p>{formatter.format(price)}</p>
         </CardHeader>
         <CardContent>

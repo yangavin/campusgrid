@@ -20,7 +20,9 @@ export default function MapView({ listings }: MapProps) {
         latitude: 44.229166,
         zoom: 14,
       }}
-      style={{ width: '90vw', height: 600, margin: 'auto', borderRadius: 5 }}
+      style={{
+        height: '100vh',
+      }}
       mapStyle="mapbox://styles/mapbox/streets-v12"
     >
       {listings.map((house) => (

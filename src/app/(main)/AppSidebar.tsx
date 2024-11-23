@@ -1,29 +1,32 @@
 import { useState } from 'react';
-import { DollarSign } from 'lucide-react';
+import { DollarSign, LogOut } from 'lucide-react';
+import { auth } from '@/app/firebase';
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarGroupContent,
 } from '@/components/ui/sidebar';
 import { Input } from '@/components/ui/input';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Checkbox } from '@/components/ui/checkbox';
+import { ModeToggle } from '@/app/ThemeButton';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import House from '../models';
+import HouseCard from './listings/HouseCard';
+import Skeletons from './Skeletons';
 
 const bedOptions = [1, 2, 3, 4, 5, 6, 7];
-const sourceOptions = [
-  'accommodation',
-  'axon',
-  'amberpeak',
-  'frontenac',
-  'kijiji',
-];
 
 interface AppSidebarProps {
   beds: number[];
   maxPrice: number | null;
   source: string[];
+  filteredListings: House[];
+  isLoading: boolean;
+  sourceOptions: string[];
   setBeds: (beds: number[]) => void;
   setMaxPrice: (maxPrice: number | null) => void;
   setSource: (source: string[]) => void;
@@ -33,23 +36,64 @@ export default function AppSidebar({
   beds,
   maxPrice,
   source,
+  filteredListings,
+  isLoading,
+  sourceOptions,
   setBeds,
   setMaxPrice,
   setSource,
 }: AppSidebarProps) {
+  const router = useRouter();
+
+  function signOut() {
+    auth.signOut();
+    router.replace('/');
+  }
+
   return (
     <Sidebar>
       <SidebarContent>
+        <div className="flex items-center justify-between p-4">
+          <Button variant="outline" onClick={signOut} className="flex gap-2">
+            <LogOut className="h-4 w-4" />
+            Log out
+          </Button>
+          <ModeToggle />
+        </div>
+
+        <h1 className="my-4 text-center text-5xl">Affyto</h1>
+        <div className="mb-10">
+          <h2 className="mb-2 text-center text-xl">
+            <a
+              href="https://www.instagram.com/affyto.housing/"
+              target="_blank"
+              className="text-primary underline"
+            >
+              Shoot us an Instagram DM
+            </a>
+          </h2>
+          <h2 className="text-center">
+            We value your feedback and we always respond!
+          </h2>
+        </div>
+
         <SidebarGroup>
-          <SidebarGroupLabel>Filters</SidebarGroupLabel>
+          <h2 className="mb-3 text-center">
+            {!isLoading &&
+              (filteredListings?.length ? (
+                <p>{filteredListings.length} listings</p>
+              ) : (
+                <p>No listings found</p>
+              ))}
+          </h2>
           <SidebarGroupContent className="space-y-6">
             {/* Beds Filter */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Beds</label>
+              <label className="block text-center font-bold">Beds</label>
               <ToggleGroup
                 type="multiple"
                 variant={'outline'}
-                className="flex flex-wrap gap-2"
+                className="flex gap-2"
                 value={beds.map(String)}
                 onValueChange={(values) => {
                   setBeds(values.map(Number));
@@ -69,7 +113,7 @@ export default function AppSidebar({
 
             {/* Max Price Filter */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Max Price</label>
+              <label className="font-bold">Max Price</label>
               <div className="relative">
                 <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -87,7 +131,7 @@ export default function AppSidebar({
 
             {/* Source Filter */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Source</label>
+              <label className="font-bold">Source</label>
               <div className="flex flex-col space-y-2">
                 {sourceOptions.map((sourceOption) => (
                   <div
@@ -117,6 +161,13 @@ export default function AppSidebar({
             </div>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <div className="mt-4 flex flex-col justify-center gap-4">
+          {isLoading && <Skeletons />}
+          {filteredListings?.map((listing) => {
+            return <HouseCard key={listing.id} {...listing} />;
+          })}
+        </div>
       </SidebarContent>
     </Sidebar>
   );
