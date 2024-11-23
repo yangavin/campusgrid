@@ -18,6 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <link rel="shortcut icon" href="icon.png" type="image/x-icon" />
       <body className={inter.className}>
         <AuthProvider>{children}</AuthProvider>
       </body>
