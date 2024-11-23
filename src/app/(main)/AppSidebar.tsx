@@ -14,6 +14,17 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ModeToggle } from '@/app/ThemeButton';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import House from '../models';
 import HouseCard from './listings/HouseCard';
 import Skeletons from './Skeletons';
@@ -31,6 +42,16 @@ interface AppSidebarProps {
   setMaxPrice: (maxPrice: number | null) => void;
   setSource: (source: string[]) => void;
 }
+
+const sourceFullnames: {
+  [key: string]: string;
+} = {
+  accommodation: 'Acommodation Listings',
+  axon: 'Axon',
+  amberpeak: 'Amber Peak',
+  frontenac: 'Frontenac',
+  kijiji: 'Kijiji',
+};
 
 export default function AppSidebar({
   beds,
@@ -54,11 +75,28 @@ export default function AppSidebar({
     <Sidebar>
       <SidebarContent>
         <div className="flex items-center justify-between p-4">
-          <Button variant="outline" onClick={signOut} className="flex gap-2">
-            <LogOut className="h-4 w-4" />
-            Log out
-          </Button>
-          <ModeToggle />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="flex gap-2">
+                <LogOut className="h-4 w-4" />
+                Log out
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Are you sure you want to log out?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  You will need to log in again to access your account.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={signOut}>Log out</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
 
         <h1 className="my-4 text-center text-5xl">Affyto</h1>
@@ -153,7 +191,7 @@ export default function AppSidebar({
                       htmlFor={sourceOption}
                       className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      {sourceOption}
+                      {sourceFullnames[sourceOption]}
                     </label>
                   </div>
                 ))}
