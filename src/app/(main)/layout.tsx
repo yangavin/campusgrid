@@ -4,6 +4,7 @@ import { ModeToggle } from '@/app/ThemeButton';
 import { Button } from '@/components/ui/button';
 import { auth } from '@/app/firebase';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../AuthProvider';
 
 export default function Layout({
   children,
@@ -14,6 +15,9 @@ export default function Layout({
     auth.signOut();
     router.replace('/');
   }
+  const { user } = useAuth();
+  if (!user) router.replace('/');
+  if (!user) return null;
 
   return (
     <>

@@ -6,7 +6,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Skeletons from '@/app/Skeletons';
+import Skeletons from '@/app/(main)/Skeletons';
 import {
   Dialog,
   DialogTrigger,
@@ -17,7 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import SubletForm from './SubletForm';
 import SubletCard from './SubletCard';
-import MapView from '@/app/MapView';
+import MapView from '@/app/(main)/MapView';
 import useSWR from 'swr';
 
 type Inputs = {
