@@ -1,32 +1,29 @@
-"use client"
+'use client';
 
-import { LayoutProps } from "../../../.next/types/app/layout";
-import { ModeToggle } from "@/app/ThemeButton";
-import { Button } from "@/components/ui/button";
-import { auth } from "@/app/firebase";
-import { useRouter } from "next/navigation";
-
+import { LayoutProps } from '../../../.next/types/app/layout';
+import { ModeToggle } from '@/app/ThemeButton';
+import { Button } from '@/components/ui/button';
+import { auth } from '@/app/firebase';
+import { useRouter } from 'next/navigation';
 
 export default function Layout({ children }: LayoutProps) {
-  const router= useRouter()
+  const router = useRouter();
 
-  function signOut(){
+  function signOut() {
     auth.signOut();
-    router.replace("/")
+    router.replace('/');
   }
 
   return (
     <>
-      <div className="flex justify-between m-4">
+      <div className="m-4 flex justify-between">
         <ModeToggle />
-        <Button onClick={signOut}>
-          Log out
-        </Button>
+        <Button onClick={signOut}>Log out</Button>
       </div>
-      <h1 className="text-center text-5xl my-4">Affyto</h1>
+      <h1 className="my-4 text-center text-5xl">Affyto</h1>
 
       <div className="mb-10">
-        <h2 className="text-xl text-center mb-2">
+        <h2 className="mb-2 text-center text-xl">
           <a
             href="https://www.instagram.com/affyto.housing/"
             target="_blank"
@@ -35,9 +32,11 @@ export default function Layout({ children }: LayoutProps) {
             Shoot us an Instagram DM
           </a>
         </h2>
-        <h2 className="text-center">We value your feedback and we always respond!</h2>
+        <h2 className="text-center">
+          We value your feedback and we always respond!
+        </h2>
       </div>
-        {children}
+      {children}
     </>
-  )
+  );
 }

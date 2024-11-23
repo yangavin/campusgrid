@@ -1,4 +1,4 @@
-import { GeoPoint } from "firebase/firestore";
+import { GeoPoint } from 'firebase/firestore';
 
 export default interface House {
   id: string;
@@ -10,7 +10,7 @@ export default interface House {
   beds: string;
   availableDate?: string;
   source: string;
-  title?: "string"; // For Kijiji
+  title?: 'string'; // For Kijiji
   manuallyAdded?: boolean;
   coordinates?: GeoPoint;
 }
