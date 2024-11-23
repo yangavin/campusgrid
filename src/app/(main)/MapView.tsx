@@ -3,7 +3,7 @@
 import Map, { Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useState } from 'react';
-import House from './models';
+import House from '@/app/models';
 
 interface MapProps {
   listings: House[];
@@ -42,12 +42,17 @@ export default function MapView({ listings }: MapProps) {
               offset={25}
               onClose={() => setSelectedMarker(null)}
             >
-              <div>
+              <a href={house.link} target="_blank" className="rounded-lg">
                 <h3>{house.title}</h3>
-                <a href={house.link} target="_blank">
-                  {house.address}
-                </a>
-              </div>
+                <img
+                  src={house.image}
+                  alt="house"
+                  className="mb-2 aspect-[16/9] w-full rounded-lg object-cover object-center"
+                />
+                <p>{house.address}</p>
+                <p className="font-bold">{house.beds} Beds</p>
+                <p className="font-bold">${house.price}/mo.</p>
+              </a>
             </Popup>
           )}
         </div>
