@@ -22,9 +22,7 @@ export default function Page() {
 
   return (
     <>
-      <div>
-        <MapView listings={filteredListingsWithCoordinates} />
-      </div>
+      <MapView listings={filteredListingsWithCoordinates} />
     </>
   );
 }
