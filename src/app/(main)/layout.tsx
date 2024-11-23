@@ -1,12 +1,13 @@
 'use client';
 
-import { LayoutProps } from '../../../.next/types/app/layout';
 import { ModeToggle } from '@/app/ThemeButton';
 import { Button } from '@/components/ui/button';
 import { auth } from '@/app/firebase';
 import { useRouter } from 'next/navigation';
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const router = useRouter();
 
   function signOut() {
