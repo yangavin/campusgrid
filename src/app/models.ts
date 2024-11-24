@@ -11,7 +11,6 @@ export default interface House {
   availableDate?: string;
   source: string;
   title?: 'string'; // For Kijiji
-  manuallyAdded?: boolean;
   coordinates?: GeoPoint;
 }
 export interface Sublet {
