@@ -1,3 +1,4 @@
+// components/MapView.tsx
 'use client';
 
 import Map, { Marker, Popup } from 'react-map-gl';
@@ -13,6 +14,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import SignInButton from './SignInButton';
+import PopupContent from './PopupContent';
+import './map.css';
 
 interface MapProps {
   listings: House[];
@@ -23,20 +26,6 @@ export default function MapView({ listings }: MapProps) {
   const [showSignInDialog, setShowSignInDialog] = useState(false);
   const { user } = useAuth();
 
-  const popupContent = (house: House) => (
-    <div className="rounded-lg">
-      <h3>{house.title}</h3>
-      <img
-        src={house.image}
-        alt="house"
-        className="mb-2 aspect-[16/9] w-full rounded-lg object-cover object-center"
-      />
-      <p>{house.address}</p>
-      <p className="font-bold">{house.beds} Beds</p>
-      <p className="font-bold">${house.price}/mo.</p>
-    </div>
-  );
-
   return (
     <>
       <Map
@@ -46,9 +35,7 @@ export default function MapView({ listings }: MapProps) {
           latitude: 44.229166,
           zoom: 14,
         }}
-        style={{
-          height: '100vh',
-        }}
+        style={{ height: '100vh' }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
         {listings.map((house) => (
@@ -69,17 +56,24 @@ export default function MapView({ listings }: MapProps) {
                 anchor="top"
                 offset={25}
                 onClose={() => setSelectedMarker(null)}
+                className="overflow-hidden"
+                maxWidth="300px"
+                closeButton={false}
               >
                 {user ? (
-                  <a href={house.link} target="_blank">
-                    {popupContent(house)}
+                  <a
+                    href={house.link}
+                    target="_blank"
+                    className="block transition-opacity hover:opacity-90"
+                  >
+                    <PopupContent house={house} />
                   </a>
                 ) : (
                   <div
-                    className="cursor-pointer"
+                    className="cursor-pointer transition-opacity hover:opacity-90"
                     onClick={() => setShowSignInDialog(true)}
                   >
-                    {popupContent(house)}
+                    <PopupContent house={house} />
                   </div>
                 )}
               </Popup>
