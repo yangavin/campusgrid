@@ -54,6 +54,7 @@ const sourceFullnames: {
   amberpeak: 'Amber Peak',
   frontenac: 'Frontenac',
   kijiji: 'Kijiji',
+  panadew: 'Panadew',
 };
 function signOut() {
   auth.signOut();

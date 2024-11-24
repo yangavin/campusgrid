@@ -43,6 +43,7 @@ const sourceOptions = [
   'amberpeak',
   'frontenac',
   'kijiji',
+  'panadew',
 ];
 
 export default function Layout({
