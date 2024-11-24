@@ -48,6 +48,7 @@ export default function MapView({ listings }: MapProps) {
                 e.originalEvent.stopPropagation();
                 setSelectedMarker(house);
               }}
+              color="#a991e6"
             />
             {selectedMarker?.id === house.id && (
               <Popup

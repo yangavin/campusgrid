@@ -156,22 +156,23 @@ export default function AppSidebar({
                 ))}
               </ToggleGroup>
             </div>
-
             {/* Max Price Filter */}
-            <div className="space-y-2">
-              <label className="font-bold">Max Price</label>
-              <div className="relative">
-                <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="number"
-                  placeholder="Enter maximum price"
-                  className="pl-8"
-                  value={maxPrice || ''}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setMaxPrice(value ? Number(value) : null);
-                  }}
-                />
+            <div className="mt-4 space-y-2 text-center">
+              <label className="block font-bold">Max Price</label>
+              <div className="relative flex justify-center">
+                <div className="relative w-1/2">
+                  <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="number"
+                    placeholder="Enter maximum price"
+                    className="pl-8"
+                    value={maxPrice || ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setMaxPrice(value ? Number(value) : null);
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
