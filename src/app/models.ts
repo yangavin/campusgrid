@@ -1,3 +1,5 @@
+import { GeoPoint } from 'firebase/firestore';
+
 export default interface House {
   id: string;
   image: string;
@@ -8,6 +10,8 @@ export default interface House {
   beds: string;
   availableDate?: string;
   source: string;
+  title?: 'string'; // For Kijiji
+  coordinates?: GeoPoint;
 }
 export interface Sublet {
   id: string;
@@ -29,5 +33,6 @@ export interface UserData {
   uid: string;
   name: string;
   email: string;
-  posted: boolean;
+  posted?: boolean;
+  lastLoggedIn: String;
 }
