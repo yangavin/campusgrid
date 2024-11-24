@@ -33,7 +33,7 @@ export default function HouseCard({
   source,
 }: House) {
   const [showSignInDialog, setShowSignInDialog] = useState(false);
-  const { user, signIn } = useAuth();
+  const { user } = useAuth();
 
   const cardContent = (
     <Card className="h-96">
@@ -101,7 +101,7 @@ export default function HouseCard({
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center">
-            <SignInButton />
+            <SignInButton onSignInSuccess={() => setShowSignInDialog(false)} />
           </div>
           <p className="text-[10px] text-muted-foreground">
             We do not endorse listings on our platform and cannot guarantee

@@ -30,6 +30,7 @@ import House from '../models';
 import HouseCard from './listings/HouseCard';
 import Skeletons from './Skeletons';
 import { useAuth } from './AuthProvider';
+import SignInButton from './SignInButton';
 
 const bedOptions = [1, 2, 3, 4, 5, 6, 7];
 
@@ -77,7 +78,7 @@ export default function AppSidebar({
       <SidebarContent>
         <div className="flex items-center justify-between p-4">
           {!user ? (
-            <Button onClick={signIn}>Sign in</Button>
+            <SignInButton />
           ) : (
             <AlertDialog>
               <AlertDialogTrigger asChild>
