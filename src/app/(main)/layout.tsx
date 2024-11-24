@@ -4,13 +4,13 @@ import { ModeToggle } from '@/app/ThemeButton';
 import { Button } from '@/components/ui/button';
 import { auth, db } from '@/app/firebase';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../AuthProvider';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import AppSidebar from '@/app/(main)/AppSidebar';
 import { useContext, createContext, useState } from 'react';
 import useSWR from 'swr';
 import { collection, getDocs } from 'firebase/firestore';
 import House from '../models';
+import { AuthProvider } from './AuthProvider';
 
 interface Filter {
   beds: number[];
@@ -53,12 +53,12 @@ export default function Layout({
     maxPrice: null,
     source: sourceOptions,
   });
-  const router = useRouter();
   const {
     data: listings,
     isLoading,
     error,
   } = useSWR<House[]>('listings', getListings);
+  if (error) console.log(error);
 
   function setBeds(beds: number[]) {
     setFilter({ ...filter, beds });
@@ -84,25 +84,23 @@ export default function Layout({
     return true;
   });
 
-  const { user } = useAuth();
-  if (!user) router.replace('/');
-  if (!user) return null;
-
   return (
-    <HouseFilterContext.Provider value={filteredListings || []}>
-      <SidebarProvider>
-        <AppSidebar
-          {...filter}
-          setBeds={setBeds}
-          setMaxPrice={setMaxPrice}
-          setSource={setSource}
-          filteredListings={filteredListings || []}
-          isLoading={isLoading}
-          sourceOptions={sourceOptions}
-        />
-        <SidebarTrigger className="md:hidden" />
-        <main className="flex-grow">{children}</main>
-      </SidebarProvider>
-    </HouseFilterContext.Provider>
+    <AuthProvider>
+      <HouseFilterContext.Provider value={filteredListings || []}>
+        <SidebarProvider>
+          <AppSidebar
+            {...filter}
+            setBeds={setBeds}
+            setMaxPrice={setMaxPrice}
+            setSource={setSource}
+            filteredListings={filteredListings || []}
+            isLoading={isLoading}
+            sourceOptions={sourceOptions}
+          />
+          <SidebarTrigger className="md:hidden" />
+          <main className="flex-grow">{children}</main>
+        </SidebarProvider>
+      </HouseFilterContext.Provider>
+    </AuthProvider>
   );
 }

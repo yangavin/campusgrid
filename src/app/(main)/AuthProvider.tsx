@@ -13,12 +13,12 @@ import {
   signInWithPopup,
   User,
 } from 'firebase/auth';
-import { auth } from './firebase';
+import { auth } from '../firebase';
 import { useRouter } from 'next/navigation';
-import { UserData } from './models';
+import { UserData } from '../models';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from './firebase';
-import { checkAnalytics } from './firebase';
+import { db } from '../firebase';
+import { checkAnalytics } from '../firebase';
 import { logEvent } from 'firebase/analytics';
 
 interface AuthContextType {

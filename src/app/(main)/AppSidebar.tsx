@@ -29,6 +29,7 @@ import {
 import House from '../models';
 import HouseCard from './listings/HouseCard';
 import Skeletons from './Skeletons';
+import { useAuth } from './AuthProvider';
 
 const bedOptions = [1, 2, 3, 4, 5, 6, 7];
 
@@ -53,6 +54,9 @@ const sourceFullnames: {
   frontenac: 'Frontenac',
   kijiji: 'Kijiji',
 };
+function signOut() {
+  auth.signOut();
+}
 
 export default function AppSidebar({
   beds,
@@ -65,40 +69,41 @@ export default function AppSidebar({
   setMaxPrice,
   setSource,
 }: AppSidebarProps) {
-  const router = useRouter();
-
-  function signOut() {
-    auth.signOut();
-    router.replace('/');
-  }
+  const { user, signIn } = useAuth();
 
   return (
     <Sidebar>
       <SidebarTrigger className="md:hidden" />
       <SidebarContent>
         <div className="flex items-center justify-between p-4">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="outline" className="flex gap-2">
-                <LogOut className="h-4 w-4" />
-                Log out
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Are you sure you want to log out?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  You will need to log in again to access your account.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={signOut}>Log out</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          {!user ? (
+            <Button onClick={signIn}>Sign in</Button>
+          ) : (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" className="flex gap-2">
+                  <LogOut className="h-4 w-4" />
+                  Log out
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to log out?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You will need to log in again to access your account.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={signOut}>
+                    Log out
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
 
         <h1 className="my-4 text-center text-5xl">Affyto</h1>

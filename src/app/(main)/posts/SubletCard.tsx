@@ -24,7 +24,7 @@ import { useMediaQuery } from 'usehooks-ts';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
-import { useAuth } from '@/app/AuthProvider';
+import { useAuth } from '@/app/(main)/AuthProvider';
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',

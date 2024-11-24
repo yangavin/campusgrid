@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage, db } from '@/app/firebase';
 import { addDoc, collection } from 'firebase/firestore';
-import { useAuth } from '@/app/AuthProvider';
+import { useAuth } from '@/app/(main)/AuthProvider';
 
 type Inputs = {
   address: string;
