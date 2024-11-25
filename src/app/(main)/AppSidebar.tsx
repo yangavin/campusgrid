@@ -55,6 +55,9 @@ const sourceFullnames: {
   frontenac: 'Frontenac',
   kijiji: 'Kijiji',
   panadew: 'Panadew',
+  homestead: 'Homestead',
+  tribond: 'Tribond',
+  rentalgauge: 'Rental Gauge',
 };
 function signOut() {
   auth.signOut();

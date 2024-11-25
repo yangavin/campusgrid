@@ -44,6 +44,9 @@ const sourceOptions = [
   'frontenac',
   'kijiji',
   'panadew',
+  'homestead',
+  'tribond',
+  'rentalgauge',
 ];
 
 export default function Layout({
