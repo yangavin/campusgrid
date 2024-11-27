@@ -19,6 +19,7 @@ interface Filter {
 }
 
 export const HouseFilterContext = createContext<House[]>([]);
+export const HoveringIdContext = createContext<string | null>(null);
 
 async function getListings() {
   const querySnapshot = await getDocs(collection(db, 'listings'));
@@ -65,6 +66,7 @@ export default function Layout({
     error,
   } = useSWR<House[]>('listings', getListings);
   if (error) console.log(error);
+  const [hoveringId, setHoveringId] = useState<string | null>(null);
 
   function setBeds(beds: number[]) {
     setFilter({ ...filter, beds });
@@ -93,19 +95,22 @@ export default function Layout({
   return (
     <AuthProvider>
       <HouseFilterContext.Provider value={filteredListings || []}>
-        <SidebarProvider>
-          <AppSidebar
-            {...filter}
-            setBeds={setBeds}
-            setMaxPrice={setMaxPrice}
-            setSource={setSource}
-            filteredListings={filteredListings || []}
-            isLoading={isLoading}
-            sourceOptions={sourceOptions}
-          />
-          <SidebarTrigger className="md:hidden" />
-          <main className="flex-grow">{children}</main>
-        </SidebarProvider>
+        <HoveringIdContext.Provider value={hoveringId}>
+          <SidebarProvider>
+            <AppSidebar
+              {...filter}
+              setBeds={setBeds}
+              setMaxPrice={setMaxPrice}
+              setSource={setSource}
+              filteredListings={filteredListings || []}
+              isLoading={isLoading}
+              sourceOptions={sourceOptions}
+              setHoveringId={setHoveringId}
+            />
+            <SidebarTrigger className="md:hidden" />
+            <main className="flex-grow">{children}</main>
+          </SidebarProvider>
+        </HoveringIdContext.Provider>
       </HouseFilterContext.Provider>
     </AuthProvider>
   );

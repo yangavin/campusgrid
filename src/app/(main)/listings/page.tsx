@@ -1,20 +1,12 @@
 'use client';
 
-import { useContext, useState } from 'react';
-import HouseCard from './HouseCard';
-import House from '@/app/models';
-import useSWR from 'swr';
-import { db } from '@/app/firebase';
-import { collection, getDocs } from 'firebase/firestore';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import Skeletons from '@/app/(main)/Skeletons';
+import { useContext } from 'react';
 import MapView from '@/app/(main)/MapView';
-import { HouseFilterContext } from '@/app/(main)/layout';
+import { HouseFilterContext, HoveringIdContext } from '@/app/(main)/layout';
 
 export default function Page() {
   const filteredListings = useContext(HouseFilterContext);
+  const hoveringId = useContext(HoveringIdContext);
 
   const filteredListingsWithCoordinates = filteredListings
     ? filteredListings.filter((house) => house.coordinates)
@@ -22,7 +14,10 @@ export default function Page() {
 
   return (
     <>
-      <MapView listings={filteredListingsWithCoordinates} />
+      <MapView
+        listings={filteredListingsWithCoordinates}
+        hoveringId={hoveringId}
+      />
     </>
   );
 }

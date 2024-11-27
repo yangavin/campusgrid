@@ -44,6 +44,7 @@ interface AppSidebarProps {
   setBeds: (beds: number[]) => void;
   setMaxPrice: (maxPrice: number | null) => void;
   setSource: (source: string[]) => void;
+  setHoveringId: (id: string | null) => void;
 }
 
 const sourceFullnames: {
@@ -75,6 +76,7 @@ export default function AppSidebar({
   setBeds,
   setMaxPrice,
   setSource,
+  setHoveringId,
 }: AppSidebarProps) {
   const { user, signIn } = useAuth();
 
@@ -218,7 +220,20 @@ export default function AppSidebar({
         <div className="mt-4 flex flex-col justify-center gap-4">
           {isLoading && <Skeletons />}
           {filteredListings?.map((listing) => {
-            return <HouseCard key={listing.id} {...listing} />;
+            function setHovering(status: boolean) {
+              if (status) {
+                setHoveringId(listing.id);
+              } else {
+                setHoveringId(null);
+              }
+            }
+            return (
+              <HouseCard
+                key={listing.id}
+                {...listing}
+                setHovering={setHovering}
+              />
+            );
           })}
         </div>
       </SidebarContent>

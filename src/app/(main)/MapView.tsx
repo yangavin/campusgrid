@@ -3,7 +3,7 @@
 
 import Map, { Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import House from '@/app/models';
 import { useAuth } from './AuthProvider';
 import {
@@ -19,12 +19,22 @@ import './map.css';
 
 interface MapProps {
   listings: House[];
+  hoveringId: string | null;
 }
 
-export default function MapView({ listings }: MapProps) {
+export default function MapView({ listings, hoveringId }: MapProps) {
   const [selectedMarker, setSelectedMarker] = useState<House | null>(null);
   const [showSignInDialog, setShowSignInDialog] = useState(false);
   const { user } = useAuth();
+
+  useEffect(() => {
+    if (hoveringId) {
+      const house = listings.find((h) => h.id === hoveringId);
+      if (house) {
+        setSelectedMarker(house);
+      }
+    }
+  }, [hoveringId, listings]);
 
   return (
     <>

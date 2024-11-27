@@ -31,12 +31,17 @@ export default function HouseCard({
   beds,
   availableDate,
   source,
-}: House) {
+  setHovering,
+}: House & { setHovering: (status: boolean) => void }) {
   const [showSignInDialog, setShowSignInDialog] = useState(false);
   const { user } = useAuth();
 
   const cardContent = (
-    <Card className="h-96">
+    <Card
+      className="h-96"
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+    >
       <CardHeader>
         <CardTitle>{address}</CardTitle>
         <img
