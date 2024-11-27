@@ -59,6 +59,7 @@ const sourceFullnames: {
   tribond: 'Tribond',
   rentalgauge: 'Rental Gauge',
   limestone: 'Limestone',
+  heron: 'Heron',
 };
 function signOut() {
   auth.signOut();

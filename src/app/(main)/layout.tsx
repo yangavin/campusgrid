@@ -48,6 +48,7 @@ const sourceOptions = [
   'tribond',
   'rentalgauge',
   'limestone',
+  'heron',
 ];
 
 export default function Layout({
