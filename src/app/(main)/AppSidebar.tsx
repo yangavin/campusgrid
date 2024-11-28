@@ -112,7 +112,7 @@ export default function AppSidebar({
           )}
         </div> */}
 
-        <h1 className="my-4 text-center text-5xl">Affyto</h1>
+        <h1 className="my-8 text-center text-5xl">Affyto</h1>
         <div className="mb-10">
           <h2 className="mb-2 text-center text-xl">
             <a
