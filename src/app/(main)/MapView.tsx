@@ -5,7 +5,6 @@ import Map, { Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useEffect, useState } from 'react';
 import House from '@/app/models';
-import { useAuth } from './AuthProvider';
 import {
   Dialog,
   DialogContent,
@@ -25,7 +24,6 @@ interface MapProps {
 export default function MapView({ listings, hoveringId }: MapProps) {
   const [selectedMarker, setSelectedMarker] = useState<House | null>(null);
   const [showSignInDialog, setShowSignInDialog] = useState(false);
-  const { user } = useAuth();
 
   useEffect(() => {
     if (hoveringId) {

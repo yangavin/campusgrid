@@ -93,25 +93,25 @@ export default function Layout({
   });
 
   return (
-    <AuthProvider>
-      <HouseFilterContext.Provider value={filteredListings || []}>
-        <HoveringIdContext.Provider value={hoveringId}>
-          <SidebarProvider>
-            <AppSidebar
-              {...filter}
-              setBeds={setBeds}
-              setMaxPrice={setMaxPrice}
-              setSource={setSource}
-              filteredListings={filteredListings || []}
-              isLoading={isLoading}
-              sourceOptions={sourceOptions}
-              setHoveringId={setHoveringId}
-            />
-            <SidebarTrigger className="md:hidden" />
-            <main className="flex-grow">{children}</main>
-          </SidebarProvider>
-        </HoveringIdContext.Provider>
-      </HouseFilterContext.Provider>
-    </AuthProvider>
+    // <AuthProvider>
+    <HouseFilterContext.Provider value={filteredListings || []}>
+      <HoveringIdContext.Provider value={hoveringId}>
+        <SidebarProvider>
+          <AppSidebar
+            {...filter}
+            setBeds={setBeds}
+            setMaxPrice={setMaxPrice}
+            setSource={setSource}
+            filteredListings={filteredListings || []}
+            isLoading={isLoading}
+            sourceOptions={sourceOptions}
+            setHoveringId={setHoveringId}
+          />
+          <SidebarTrigger className="md:hidden" />
+          <main className="flex-grow">{children}</main>
+        </SidebarProvider>
+      </HoveringIdContext.Provider>
+    </HouseFilterContext.Provider>
+    // </AuthProvider>
   );
 }

@@ -29,7 +29,6 @@ import {
 import House from '../models';
 import HouseCard from './listings/HouseCard';
 import Skeletons from './Skeletons';
-import { useAuth } from './AuthProvider';
 import SignInButton from './SignInButton';
 
 const bedOptions = [1, 2, 3, 4, 5, 6, 7];
@@ -78,8 +77,6 @@ export default function AppSidebar({
   setSource,
   setHoveringId,
 }: AppSidebarProps) {
-  const { user, signIn } = useAuth();
-
   return (
     <Sidebar>
       <SidebarTrigger className="md:hidden" />
