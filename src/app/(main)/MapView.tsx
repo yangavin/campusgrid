@@ -71,22 +71,13 @@ export default function MapView({ listings, hoveringId }: MapProps) {
                 maxWidth="300px"
                 closeButton={false}
               >
-                {user ? (
-                  <a
-                    href={house.link}
-                    target="_blank"
-                    className="block transition-opacity hover:opacity-90"
-                  >
-                    <PopupContent house={house} />
-                  </a>
-                ) : (
-                  <div
-                    className="cursor-pointer transition-opacity hover:opacity-90"
-                    onClick={() => setShowSignInDialog(true)}
-                  >
-                    <PopupContent house={house} />
-                  </div>
-                )}
+                <a
+                  href={house.link}
+                  target="_blank"
+                  className="block transition-opacity hover:opacity-90"
+                >
+                  <PopupContent house={house} />
+                </a>
               </Popup>
             )}
           </div>

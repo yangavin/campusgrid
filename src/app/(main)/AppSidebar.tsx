@@ -84,7 +84,7 @@ export default function AppSidebar({
     <Sidebar>
       <SidebarTrigger className="md:hidden" />
       <SidebarContent>
-        <div className="flex items-center justify-between p-4">
+        {/* <div className="flex items-center justify-between p-4">
           {!user ? (
             <SignInButton />
           ) : (
@@ -113,7 +113,7 @@ export default function AppSidebar({
               </AlertDialogContent>
             </AlertDialog>
           )}
-        </div>
+        </div> */}
 
         <h1 className="my-4 text-center text-5xl">Affyto</h1>
         <div className="mb-10">
@@ -129,6 +129,11 @@ export default function AppSidebar({
           <h2 className="text-center">
             We value your feedback and we always respond!
           </h2>
+          <p className="mt-4 text-center text-xs">
+            We do not endorse listings on our platform and cannot guarantee
+            their authenticity. Users should verify listings independently
+            before engagement.
+          </p>
         </div>
 
         <SidebarGroup>

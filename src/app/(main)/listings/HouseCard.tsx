@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { useAuth } from '../AuthProvider';
-import { Button } from '@/components/ui/button';
 import SignInButton from '../SignInButton';
 
 const formatter = new Intl.NumberFormat('en-US', {
@@ -34,7 +33,6 @@ export default function HouseCard({
   setHovering,
 }: House & { setHovering: (status: boolean) => void }) {
   const [showSignInDialog, setShowSignInDialog] = useState(false);
-  const { user } = useAuth();
 
   const cardContent = (
     <Card
@@ -61,28 +59,26 @@ export default function HouseCard({
     </Card>
   );
 
-  if (user) {
-    return (
-      <Link
-        href={link}
-        target="_blank"
-        className="w-full animate-fade-in"
-        onClick={async () => {
-          const analytics = await checkAnalytics;
-          if (analytics) {
-            logEvent(analytics, 'select_content', {
-              content_type: 'listing',
-              item_id: id,
-              beds: beds,
-              source: source,
-            });
-          }
-        }}
-      >
-        {cardContent}
-      </Link>
-    );
-  }
+  return (
+    <Link
+      href={link}
+      target="_blank"
+      className="w-full animate-fade-in"
+      onClick={async () => {
+        const analytics = await checkAnalytics;
+        if (analytics) {
+          logEvent(analytics, 'select_content', {
+            content_type: 'listing',
+            item_id: id,
+            beds: beds,
+            source: source,
+          });
+        }
+      }}
+    >
+      {cardContent}
+    </Link>
+  );
 
   return (
     <>
