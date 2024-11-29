@@ -107,7 +107,6 @@ export default function Layout({
             sourceOptions={sourceOptions}
             setHoveringId={setHoveringId}
           />
-          <SidebarTrigger className="md:hidden" />
           <main className="flex-grow">{children}</main>
         </SidebarProvider>
       </HoveringIdContext.Provider>
