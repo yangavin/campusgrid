@@ -19,11 +19,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import House from '../models';
-import HouseCard from './listings/HouseCard';
+import House from '../../models';
+import HouseCard from './HouseCard';
 import Skeletons from './Skeletons';
-import SignInButton from './SignInButton';
+import SignInButton from '../(auth)/SignInButton';
 import { SidebarGroup, SidebarGroupContent } from '@/components/ui/sidebar';
+import { AuthProvider } from '../(auth)/AuthProvider';
 
 const bedOptions = [1, 2, 3, 4, 5, 6, 7];
 

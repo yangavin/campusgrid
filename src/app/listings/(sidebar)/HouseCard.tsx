@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useState } from 'react';
-import SignInButton from '../SignInButton';
+import SignInButton from '../(auth)/SignInButton';
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
