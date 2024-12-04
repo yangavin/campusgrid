@@ -7,20 +7,8 @@ import { collection, getDocs } from 'firebase/firestore';
 import House from '../models';
 import MapView from './(map)/MapView';
 import AppSidebar from './(sidebar)/AppSidebar';
-
-const sourceOptions = [
-  'accommodation',
-  'axon',
-  'amberpeak',
-  'frontenac',
-  'kijiji',
-  'panadew',
-  'homestead',
-  'tribond',
-  'rentalgauge',
-  'limestone',
-  'heron',
-];
+import { AuthProvider } from './(auth)/AuthProvider';
+import { sourceFullnames } from './(sidebar)/options';
 
 async function getListings() {
   const querySnapshot = await getDocs(collection(db, 'listings'));
@@ -42,7 +30,7 @@ async function getListings() {
 export default function Page() {
   const [beds, setBeds] = useState<number[]>([]);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
-  const [source, setSource] = useState<string[]>(sourceOptions);
+  const [source, setSource] = useState<string[]>(Object.keys(sourceFullnames));
 
   const {
     data: listings,
@@ -71,7 +59,7 @@ export default function Page() {
     : [];
 
   return (
-    <>
+    <AuthProvider>
       <AppSidebar
         beds={beds}
         maxPrice={maxPrice}
@@ -81,13 +69,13 @@ export default function Page() {
         setSource={setSource}
         filteredListings={filteredListings || []}
         isLoading={isLoading}
-        sourceOptions={sourceOptions}
+        sourceOptions={Object.keys(sourceFullnames)}
         setHoveringId={setHoveringId}
       />
       <MapView
         listings={filteredListingsWithCoordinates}
         hoveringId={hoveringId}
       />
-    </>
+    </AuthProvider>
   );
 }

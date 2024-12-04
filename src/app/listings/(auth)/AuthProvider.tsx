@@ -14,12 +14,12 @@ import {
   User,
 } from 'firebase/auth';
 import { auth } from '../../firebase';
-import { useRouter } from 'next/navigation';
 import { UserData } from '../../models';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { checkAnalytics } from '../../firebase';
 import { logEvent } from 'firebase/analytics';
+import { useUser } from '@/app/hooks/useUser';
 
 interface AuthContextType {
   user: UserData | null;
@@ -70,24 +70,27 @@ const loadUserData = async (user: User | null): Promise<UserData | null> => {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
+
+  const { user, mutate } = useUser(firebaseUser?.uid);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
-      if (user) {
-        setUser(await loadUserData(user));
-        const analytics = await checkAnalytics;
-        if (analytics) logEvent(analytics!, 'login');
-      } else {
-        setUser(null);
+      setFirebaseUser(user);
+      if (!user) {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (firebaseUser && user) {
+      setLoading(false);
+    }
+  }, [firebaseUser, user]);
 
   const signIn = async () => {
     const provider = new GoogleAuthProvider();
@@ -96,16 +99,14 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     if (additionalInfo?.isNewUser) {
       const analytics = await checkAnalytics;
       if (analytics) logEvent(analytics, 'sign_up');
-      const userData = await loadUserData(result.user);
-      setUser(userData);
-      setLoading(false);
-      router.replace('/listings');
+      await loadUserData(result.user);
+      mutate();
     }
   };
 
   const value: AuthContextType = {
-    user,
-    loading,
+    user: user || null,
+    loading: loading || (!user && !!firebaseUser),
     signIn,
   };
 

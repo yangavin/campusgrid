@@ -8,25 +8,16 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ModeToggle } from '@/app/ThemeButton';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import { useAuth } from '../(auth)/AuthProvider';
 import House from '../../models';
 import HouseCard from './HouseCard';
 import Skeletons from './Skeletons';
 import SignInButton from '../(auth)/SignInButton';
 import { SidebarGroup, SidebarGroupContent } from '@/components/ui/sidebar';
-import { AuthProvider } from '../(auth)/AuthProvider';
-
-const bedOptions = [1, 2, 3, 4, 5, 6, 7];
+import SignInDialog from '../(auth)/SignInDialog';
+import NotificationsDialog from './NotificationsDialog';
+import { bedOptions, sourceFullnames } from './options';
+import SignOutDialog from './SignoutDialog';
 
 interface AppSidebarProps {
   beds: number[];
@@ -41,25 +32,6 @@ interface AppSidebarProps {
   setHoveringId: (id: string | null) => void;
 }
 
-const sourceFullnames: {
-  [key: string]: string;
-} = {
-  accommodation: 'Acommodation Listings',
-  axon: 'Axon',
-  amberpeak: 'Amber Peak',
-  frontenac: 'Frontenac',
-  kijiji: 'Kijiji',
-  panadew: 'Panadew',
-  homestead: 'Homestead',
-  tribond: 'Tribond',
-  rentalgauge: 'Rental Gauge',
-  limestone: 'Limestone',
-  heron: 'Heron',
-};
-function signOut() {
-  auth.signOut();
-}
-
 export default function AppSidebar({
   beds,
   maxPrice,
@@ -72,8 +44,37 @@ export default function AppSidebar({
   setSource,
   setHoveringId,
 }: AppSidebarProps) {
+  const [signInOpen, setSignInOpen] = useState(false);
+  const [signOutOpen, setSignOutOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const { user } = useAuth();
+
+  const handleNotificationsClick = () => {
+    if (!user) {
+      setSignInOpen(true);
+    } else {
+      setNotificationsOpen(true);
+    }
+  };
+
   return (
     <CustomSidebar>
+      <div className="flex justify-between">
+        <Button variant={'outline'} onClick={handleNotificationsClick}>
+          {user?.subscribed ? 'Edit Notifications' : 'Get Notified'}
+        </Button>
+        {user && (
+          <Button variant={'secondary'} onClick={() => setSignOutOpen(true)}>
+            Sign Out
+          </Button>
+        )}
+      </div>
+      <SignInDialog open={signInOpen} onOpenChange={setSignInOpen} />
+      <SignOutDialog open={signOutOpen} onOpenChange={setSignOutOpen} />
+      <NotificationsDialog
+        open={notificationsOpen}
+        onOpenChange={setNotificationsOpen}
+      />
       <h1 className="my-8 text-center text-5xl">Affyto</h1>
       <div className="mb-10">
         <h2 className="mb-2 text-center text-xl">

@@ -35,4 +35,8 @@ export interface UserData {
   email: string;
   posted?: boolean;
   lastLoggedIn: String;
+  subscribed?: boolean;
+  beds?: string[];
+  maxPrice?: number;
+  sources?: string[];
 }

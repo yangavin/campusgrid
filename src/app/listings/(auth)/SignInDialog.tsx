@@ -21,12 +21,12 @@ export default function SignInDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            Find Your Perfect Place Now!
+            Real-Time Market Updates
           </DialogTitle>
           <DialogDescription className="space-y-4">
             <p>
-              Sign in now to access hundreds of listings and find your perfect
-              place with ease!
+              Sign in now to get notified instantly when any new listing in the
+              market matches your criteria!
             </p>
           </DialogDescription>
         </DialogHeader>
