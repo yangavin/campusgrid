@@ -33,12 +33,11 @@ export default function SignOutDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button variant="destructive" onClick={handleSignOut}>
-            Sign Out
-          </Button>
+          <div className="flex justify-center">
+            <Button variant="destructive" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

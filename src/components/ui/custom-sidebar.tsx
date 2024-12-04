@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ViewVerticalIcon } from '@radix-ui/react-icons';
 import { Button } from './button';
 import { cn } from '@/lib/utils';
+import { SquareMenuIcon, MapPinnedIcon } from 'lucide-react';
 
 interface CustomSidebarProps {
   children: React.ReactNode;
@@ -35,11 +36,10 @@ export function CustomSidebar({ children, className }: CustomSidebarProps) {
       {isMobile && (
         <Button
           variant="outline"
-          size="icon"
-          className="fixed left-4 top-4 z-50 md:hidden"
+          className="fixed bottom-14 left-4 z-50 h-16 w-16 md:hidden"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <ViewVerticalIcon className="h-5 w-5" />
+          {isOpen ? <MapPinnedIcon size={24} /> : <SquareMenuIcon size={24} />}
         </Button>
       )}
 

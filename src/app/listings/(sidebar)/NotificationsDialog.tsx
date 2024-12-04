@@ -108,7 +108,7 @@ export default function NotificationsDialog({
                 <ToggleGroupItem
                   key={bed}
                   value={bed.toString()}
-                  className="rounded-md px-3 py-2"
+                  className="hover-disabled rounded-md px-3 py-2"
                 >
                   {bed}
                 </ToggleGroupItem>
