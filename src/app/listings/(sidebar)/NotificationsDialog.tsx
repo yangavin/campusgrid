@@ -93,7 +93,7 @@ export default function NotificationsDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
+        <div className="grid flex-1 gap-4 overflow-y-auto py-6">
           {/* Beds Filter */}
           <div className="space-y-2">
             <label className="block text-sm font-medium">Number of Beds</label>
@@ -168,7 +168,7 @@ export default function NotificationsDialog({
           </div>
         </div>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between pt-4">
           <Button onClick={handleSave} disabled={isLoading}>
             {isLoading ? (
               <>

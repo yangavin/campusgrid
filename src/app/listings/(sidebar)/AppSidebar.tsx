@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DollarSign, LogOut } from 'lucide-react';
+import { DollarSign, LogOut, BellPlus, BellOff, BellRing } from 'lucide-react';
 import { auth } from '@/app/firebase';
 import { CustomSidebar } from '@/components/ui/custom-sidebar';
 import { Input } from '@/components/ui/input';
@@ -60,15 +60,27 @@ export default function AppSidebar({
   return (
     <CustomSidebar>
       <div className="flex justify-between">
-        <Button variant={'outline'} onClick={handleNotificationsClick}>
+        <Button
+          variant="outline"
+          onClick={handleNotificationsClick}
+          className="gap-2"
+        >
+          {!user ? (
+            <BellPlus className="h-4 w-4" />
+          ) : user.subscribed ? (
+            <BellRing className="h-4 w-4" />
+          ) : (
+            <BellOff className="h-4 w-4" />
+          )}
           {user?.subscribed ? 'Edit Notifications' : 'Get Notified'}
         </Button>
         {user && (
-          <Button variant={'secondary'} onClick={() => setSignOutOpen(true)}>
+          <Button variant={'outline'} onClick={() => setSignOutOpen(true)}>
             Sign Out
           </Button>
         )}
       </div>
+
       <SignInDialog open={signInOpen} onOpenChange={setSignInOpen} />
       <SignOutDialog open={signOutOpen} onOpenChange={setSignOutOpen} />
       <NotificationsDialog
