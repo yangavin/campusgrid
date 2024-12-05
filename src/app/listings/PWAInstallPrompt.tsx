@@ -19,7 +19,7 @@ export function PWAInstallPrompt() {
         description: (
           <div className="flex items-center gap-2">
             <img src="/icon.png" alt="Affyto" className="h-5 w-5" />
-            Install our app for a better experience and instant notifications
+            Install our app for a better experience
           </div>
         ),
         action: (
