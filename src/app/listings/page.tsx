@@ -9,6 +9,7 @@ import MapView from './(map)/MapView';
 import AppSidebar from './(sidebar)/AppSidebar';
 import { AuthProvider } from './(auth)/AuthProvider';
 import { sourceFullnames } from './(sidebar)/options';
+import { useLocalStorage } from '@/app/hooks/useLocalStorage';
 
 async function getListings() {
   const querySnapshot = await getDocs(collection(db, 'listings'));
@@ -28,9 +29,15 @@ async function getListings() {
 }
 
 export default function Page() {
-  const [beds, setBeds] = useState<number[]>([]);
-  const [maxPrice, setMaxPrice] = useState<number | null>(null);
-  const [source, setSource] = useState<string[]>(Object.keys(sourceFullnames));
+  const [beds, setBeds] = useLocalStorage<number[]>('filter_beds', []);
+  const [maxPrice, setMaxPrice] = useLocalStorage<number | null>(
+    'filter_maxPrice',
+    null
+  );
+  const [source, setSource] = useLocalStorage<string[]>(
+    'filter_source',
+    Object.keys(sourceFullnames)
+  );
 
   const {
     data: listings,
