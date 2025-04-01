@@ -87,11 +87,7 @@ export default function AppSidebar({
         open={notificationsOpen}
         onOpenChange={setNotificationsOpen}
       />
-      <img
-        src="banner.svg"
-        alt="CampusGrid banner"
-        className="mx-auto mb-4 mt-10"
-      />
+      <img src="banner.svg" alt="CampusGrid banner" className="mx-auto my-6" />
 
       <SidebarGroup>
         <h2 className="mb-3 text-center">
