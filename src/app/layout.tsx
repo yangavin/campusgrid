@@ -11,9 +11,6 @@ export const metadata: Metadata = {
   title: 'CampusGrid',
   description: 'Your single source of truth for student housing',
   manifest: '/manifest.json',
-  icons: {
-    apple: '/images/icons/icon-192x192.png',
-  },
   themeColor: '#FEC400',
 };
 
