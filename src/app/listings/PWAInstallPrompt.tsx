@@ -15,10 +15,10 @@ export function PWAInstallPrompt() {
   const showInstallPrompt = useCallback(() => {
     if (!hasShownToast && isMobile && isInstallable) {
       toast({
-        title: 'Install Affyto App',
+        title: 'Install CampusGrid App',
         description: (
           <div className="flex items-center gap-2">
-            <img src="/icon.png" alt="Affyto" className="h-5 w-5" />
+            <img src="/icon.png" alt="CampusGrid" className="h-5 w-5" />
             Install our app for a better experience
           </div>
         ),

@@ -87,26 +87,11 @@ export default function AppSidebar({
         open={notificationsOpen}
         onOpenChange={setNotificationsOpen}
       />
-      <h1 className="my-8 text-center text-5xl">Affyto</h1>
-      <div className="mb-10">
-        <h2 className="mb-2 text-center text-xl">
-          <a
-            href="https://www.instagram.com/affyto.housing/"
-            target="_blank"
-            className="text-primary underline"
-          >
-            Shoot us an Instagram DM
-          </a>
-        </h2>
-        <h2 className="text-center">
-          We value your feedback and we always respond!
-        </h2>
-        <p className="mt-4 text-center text-xs">
-          We do not endorse listings on our platform and cannot guarantee their
-          authenticity. Users should verify listings independently before
-          engagement.
-        </p>
-      </div>
+      <img
+        src="banner.svg"
+        alt="CampusGrid banner"
+        className="mx-auto mb-4 mt-10"
+      />
 
       <SidebarGroup>
         <h2 className="mb-3 text-center">
@@ -190,6 +175,14 @@ export default function AppSidebar({
           </div>
         </SidebarGroupContent>
       </SidebarGroup>
+
+      <div className="mb-8">
+        <p className="mt-4 text-center text-xs">
+          We do not endorse listings on our platform and cannot guarantee their
+          authenticity. Users should verify listings independently before
+          engagement.
+        </p>
+      </div>
 
       <div className="mt-4 flex flex-col justify-center gap-4">
         {isLoading && <Skeletons />}

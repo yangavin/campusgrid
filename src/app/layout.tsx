@@ -8,13 +8,13 @@ import { PWAInstallPrompt } from '@/app/listings/PWAInstallPrompt';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Affyto',
-  description: 'Filter student housing across multiple sources',
+  title: 'CampusGrid',
+  description: 'Your single source of truth for student housing',
   manifest: '/manifest.json',
   icons: {
     apple: '/images/icons/icon-192x192.png',
   },
-  themeColor: '#7E4FF0',
+  themeColor: '#FEC400',
 };
 
 export default function RootLayout({
@@ -26,13 +26,14 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="shortcut icon" href="icon.png" type="image/x-icon" />
-        <meta name="application-name" content="Affyto" />
+        <link rel="shortcut icon" href="favicon.svg" type="image/x-icon" />
+        <meta name="application-name" content="CampusGrid" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Affyto" />
+        <meta name="apple-mobile-web-app-title" content="CampusGrid" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="theme-color" content="#7E4FF0" />
+        <meta name="theme-color" content="#FEC400" />
       </head>
       <body className={inter.className}>
         {children}
