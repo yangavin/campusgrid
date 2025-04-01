@@ -10,7 +10,7 @@ export default interface House {
   beds: string;
   availableDate?: string;
   source: string;
-  title?: 'string'; // For Kijiji
+  title?: string; // For Kijiji
   coordinates?: GeoPoint;
 }
 export interface Sublet {

@@ -28,7 +28,7 @@ export default function MapView({ listings, hoveringId }: MapProps) {
   return (
     <>
       <Map
-        mapboxAccessToken="pk.eyJ1IjoiYWZmeXRvIiwiYSI6ImNtMzExbnVidDBxbWsydG9nN29pb3N3bDcifQ.X9RhpPQwZD2hPNwxU9olPQ"
+        mapboxAccessToken="pk.eyJ1IjoiYWZmeXRvIiwiYSI6ImNtODRzM3hvdjExd2Yya29zeGN4MjRvZnEifQ.NAuvGvwPnaVJPRjvXVCYTg"
         initialViewState={{
           longitude: -76.49984,
           latitude: 44.229166,
