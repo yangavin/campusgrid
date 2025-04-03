@@ -47,7 +47,7 @@ export default function MapView({ listings, hoveringId }: MapProps) {
                 e.originalEvent.stopPropagation();
                 setSelectedMarker(house);
               }}
-              color="#ffd33d"
+              color="#ffdd66"
             />
             {selectedMarker?.id === house.id && (
               <Popup
