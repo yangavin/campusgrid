@@ -5,7 +5,6 @@ export const sourceFullnames: {
 } = {
   accommodation: 'Acommodation Listings',
   axon: 'Axon',
-  amberpeak: 'Amber Peak',
   frontenac: 'Frontenac',
   kijiji: 'Kijiji',
   panadew: 'Panadew',
